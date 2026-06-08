@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tall Bridge Signup</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav>
+        <ul class="nav-links">
+  <li><a href="index.html#home">Home</a></li>
+  <li><a href="index.html#courses">Courses</a></li>
+</ul>
+
+<div class="nav-auth">
+  <a href="login.html" class="btn-ghost">Login</a>
+</div>
+    </nav>
+    
+<div id="page-signup" class="page active">
+  <section class="auth-section">
+    <div class="auth-card">
+      <h2>Create your <br><em>Tall Bridge account.</em></h2>
+      <button class="btn-google">Sign up with Google</button>
+      <div class="divider"><span>or</span></div>
+      <form onsubmit="handleSignup(event)">
+        <input type="text" placeholder="Full Name" required>
+        <input type="tel" placeholder="Phone Number" required>
+        <input type="email" placeholder="Email Address" required>
+        <input type="password" placeholder="Create Password" required>
+        <button type="submit" class="btn-dark" style="width:100%">Create Account</button>
+      </form>
+    </div>
+  </section>
+</div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

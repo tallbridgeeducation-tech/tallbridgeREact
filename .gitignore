@@ -1,0 +1,19 @@
+node_modules/
+dist/
+
+# Environment variables — never commit these
+.env
+.env.local
+.env.*.local
+
+# Figma Make internals — not needed in the repo
+.mcp.json
+__figma__entrypoint__.ts
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*

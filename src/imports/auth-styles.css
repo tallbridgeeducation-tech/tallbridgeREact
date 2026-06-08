@@ -1,0 +1,549 @@
+/* ============================================================
+   AUTH PAGE STYLES — paste at the bottom of style.css
+   ============================================================ */
+
+/* ── Auth two-column layout ───────────────────────────────── */
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+/* ── Left: Brand panel ────────────────────────────────────── */
+.auth-brand {
+  position: relative;
+  background: #0d0d0d;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2.5rem;
+  overflow: hidden;
+  min-height: 100vh;
+}
+
+.auth-brand-wave {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 55%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.auth-brand-logo {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.auth-brand-logo img { height: 36px; width: auto; }
+
+.auth-brand-logo-text {
+  font-family: 'Lora', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.1;
+}
+
+.auth-brand-logo-text span { color: #96D74C; }
+
+.auth-brand-logo-sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.45);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  display: block;
+}
+
+.auth-brand-body {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.auth-brand-heading {
+  font-family: 'Lora', serif;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.25;
+}
+
+.auth-brand-heading em { font-style: italic; color: #96D74C; }
+
+.auth-brand-sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.7;
+  max-width: 340px;
+  margin-top: 1rem;
+}
+
+/* Course context card (desktop brand panel) */
+.auth-course-context {
+  background: rgba(150, 215, 76, 0.08);
+  border: 1px solid rgba(150, 215, 76, 0.25);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  display: none;
+}
+
+.auth-course-context.visible { display: block; }
+
+.auth-course-context-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #96D74C;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+
+.auth-course-context-name {
+  font-family: 'Lora', serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 0.25rem;
+}
+
+.auth-course-context-price {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.auth-course-context-price strong { color: #96D74C; font-size: 1rem; }
+
+/* Trust signals */
+.auth-trust { display: flex; flex-direction: column; gap: 0.6rem; }
+
+.auth-trust-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.auth-trust-item span {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.auth-brand-footer { position: relative; z-index: 1; }
+
+.auth-brand-footer p {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+/* ── Right: Form panel ────────────────────────────────────── */
+.auth-form-panel {
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem 2.5rem;
+  min-height: 100vh;
+}
+
+.auth-form-inner {
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Mobile course context strip */
+.auth-mobile-course {
+  display: none;
+  background: #f0fbe0;
+  border: 1px solid rgba(114, 28, 184, 0.15);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.auth-mobile-course.visible { display: block; }
+
+.auth-mobile-course-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: #721CB8;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
+}
+
+.auth-mobile-course-name {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #0d0d0d;
+}
+
+.auth-mobile-course-price {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  color: #555;
+}
+
+.auth-mobile-course-price strong { color: #721CB8; }
+
+/* ── Tab switcher ─────────────────────────────────────────── */
+.auth-tabs {
+  display: flex;
+  background: #f3f3f3;
+  border-radius: 10px;
+  padding: 4px;
+  margin-bottom: 2rem;
+}
+
+.auth-tab {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #888;
+  border: none;
+  background: transparent;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.auth-tab.active {
+  background: #fff;
+  color: #0d0d0d;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ── Form heading ─────────────────────────────────────────── */
+.auth-form-heading {
+  font-family: 'Lora', serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #0d0d0d;
+  line-height: 1.25;
+  margin-bottom: 0.4rem;
+}
+
+.auth-form-heading em { font-style: italic; color: #721CB8; }
+
+.auth-form-sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.875rem;
+  color: #777;
+  margin-bottom: 1.75rem;
+  line-height: 1.5;
+}
+
+/* ── Google button ────────────────────────────────────────── */
+.btn-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: #fff;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  text-decoration: none;
+}
+
+.btn-google:hover {
+  border-color: #bbb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+}
+
+.btn-google svg { flex-shrink: 0; }
+
+/* ── Or divider ───────────────────────────────────────────── */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1.25rem 0;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #e8e8e8;
+}
+
+.auth-divider span {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem;
+  color: #bbb;
+}
+
+/* ── Form fields ──────────────────────────────────────────── */
+.auth-form { display: flex; flex-direction: column; gap: 1rem; }
+
+.field-group { display: flex; flex-direction: column; gap: 0.35rem; }
+
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+
+.field-group label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #444;
+}
+
+.field-group input {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  color: #0d0d0d;
+  background: #fafafa;
+  border: 1.5px solid #e8e8e8;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.field-group input:focus {
+  border-color: #721CB8;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(114, 28, 184, 0.08);
+}
+
+.field-group input.error { border-color: #e53e3e; }
+
+.field-error {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem;
+  color: #e53e3e;
+  display: none;
+}
+
+.field-error.visible { display: block; }
+
+.forgot-link {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  color: #721CB8;
+  text-decoration: none;
+  text-align: right;
+  display: block;
+  margin-top: -0.5rem;
+}
+
+.forgot-link:hover { text-decoration: underline; }
+
+/* ── Submit buttons ───────────────────────────────────────── */
+.btn-auth-submit {
+  width: 100%;
+  padding: 0.85rem 1.5rem;
+  background: #0d0d0d;
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  margin-top: 0.25rem;
+}
+
+.btn-auth-submit:hover { background: #222; }
+.btn-auth-submit:active { transform: scale(0.99); }
+
+.btn-auth-submit--lime { background: #96D74C; color: #0d0d0d; }
+.btn-auth-submit--lime:hover { background: #86c43c; }
+
+/* ── Switch link ──────────────────────────────────────────── */
+.auth-switch {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  color: #888;
+  text-align: center;
+  margin-top: 1.25rem;
+}
+
+.auth-switch a {
+  color: #721CB8;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.auth-switch a:hover { text-decoration: underline; }
+
+/* ── Panel show/hide ──────────────────────────────────────── */
+.auth-panel { display: none; }
+.auth-panel.active { display: block; }
+
+/* ── Password strength ────────────────────────────────────── */
+.password-strength {
+  height: 3px;
+  border-radius: 2px;
+  background: #eee;
+  margin-top: 0.4rem;
+  overflow: hidden;
+}
+
+.password-strength-bar {
+  height: 100%;
+  width: 0%;
+  border-radius: 2px;
+  transition: width 0.3s, background 0.3s;
+}
+
+.password-strength-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.7rem;
+  color: #aaa;
+  margin-top: 0.25rem;
+}
+
+/* ── Terms ────────────────────────────────────────────────── */
+.auth-terms {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem;
+  color: #aaa;
+  text-align: center;
+  line-height: 1.5;
+  margin-top: 0.5rem;
+}
+
+.auth-terms a { color: #721CB8; text-decoration: none; }
+.auth-terms a:hover { text-decoration: underline; }
+
+/* ── Success state ────────────────────────────────────────── */
+.auth-success {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+  padding: 2rem 0;
+}
+
+.auth-success.visible { display: flex; }
+
+.auth-success-icon {
+  width: 56px;
+  height: 56px;
+  background: #f0fbe0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-success h3 {
+  font-family: 'Lora', serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #0d0d0d;
+}
+
+.auth-success p {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.875rem;
+  color: #777;
+  max-width: 300px;
+  line-height: 1.6;
+}
+
+/* ── Mobile hamburger button ──────────────────────────────── */
+.nav-mobile-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+.nav-mobile-toggle span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: currentColor;
+  margin: 4px 0;
+  transition: all 0.2s;
+}
+
+/* ============================================================
+   RESPONSIVE — paste these alongside your existing media queries
+   ============================================================ */
+
+/* Tablet: hide brand panel, stack to single column */
+@media (max-width: 900px) {
+  .auth-page { grid-template-columns: 1fr; }
+  .auth-brand { display: none; }
+  .auth-form-panel {
+    padding: 2rem 1.5rem;
+    min-height: calc(100vh - 70px);
+    justify-content: flex-start;
+    padding-top: 2.5rem;
+  }
+}
+
+/* Small mobile: stack name fields, shrink padding */
+@media (max-width: 480px) {
+  .auth-form-panel { padding: 1.5rem 1.25rem; }
+  .auth-form-inner { max-width: 100%; }
+  .field-row { grid-template-columns: 1fr; }
+  .auth-form-heading { font-size: 1.4rem; }
+}
+
+/* Nav collapse to hamburger */
+@media (max-width: 768px) {
+  nav { position: relative; }
+
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #0d0d0d;
+    flex-direction: column;
+    padding: 1rem 1.5rem;
+    gap: 0.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    z-index: 100;
+  }
+
+  .nav-links.open { display: flex; }
+
+  .nav-links li a {
+    display: block;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .nav-auth { display: none; }
+  .nav-mobile-toggle { display: block; color: #fff; }
+}

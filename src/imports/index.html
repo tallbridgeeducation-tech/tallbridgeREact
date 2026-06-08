@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tall Bridge Institute</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">
+    <img src="logo.png" alt="Tall Bridge Institute">
+    <div>
+      <div class="nav-logo-text">Tall Bridge<span>.</span></div>
+      <span class="nav-logo-sub">Institute</span>
+    </div>
+  </div>
+  <ul class="nav-links">
+    <li><a onclick="showPage('home')" id="nav-home" class="active">Home</a></li>
+    <li><a onclick="showPage('courses')" id="nav-courses">Courses</a></li>
+    <li><a onclick="showPage('organisation')" id="nav-organisation"> For Organisations</a></li>
+    <li><a onclick="showPage('about')" id="nav-about">About</a></li>
+  </ul>
+
+  <button class="nav-mobile-toggle" id="mobile-nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+  <span class="bar"></span>
+  <span class="bar"></span>
+  <span class="bar"></span>
+</button>
+
+<div class="nav-auth">
+    <a href="auth.html" class="btn-ghost">Signup/Login</a>
+  </div>
+</nav>
+
+<!-- ════════════ HOME ════════════ -->
+<div id="page-home" class="page active">
+<section class="hero">
+  <svg class="hero-wave" viewBox="0 0 340 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <path d="M180 0 C120 80,60 120,80 200 C100 280,200 320,180 420 C160 520,80 560,100 600 L340 600 L340 0 Z" fill="#96D74C"/>
+    <path d="M200 0 C140 80,80 120,100 200 C120 280,220 320,200 420 C180 520,100 560,120 600 L340 600 L340 0 Z" fill="none" stroke="#721CB8" stroke-width="1.5" opacity="0.6"/>
+    <path d="M215 0 C155 80,95 120,115 200 C135 280,235 320,215 420 C195 520,115 560,135 600 L340 600 L340 0 Z" fill="none" stroke="#721CB8" stroke-width="1" opacity="0.4"/>
+  </svg>
+  <div class="hero-inner">
+    <h1>The bridge between<br>where you are and<br>where you <em>need to be.</em></h1>
+    <p class="hero-sub">Tall Bridge Institute builds courses that create real, measurable change — in how you think and how you perform. Whether you are an individual building a new income stream, or an organisation closing a performance gap, we build the learning that moves the needle.</p>
+    <div class="hero-btns">
+      <button class="btn-lime" onclick="showPage('courses')">Browse Courses →</button>
+      <button class="btn-outline-lime" onclick="showPage('organisation')">For Organisations</button>
+    </div>
+  </div>
+</section>
+
+<section class="courses-preview">
+  <div class="section-label">Our Courses</div>
+  <h2 class="section-h2">Every course built around <em>one outcome</em>.</h2>
+  <div class="course-grid">
+    <div class="course-card">
+      <div class="course-top">
+        <svg class="course-top-wave" viewBox="0 0 120 160" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><path d="M60 0 C30 30,10 60,20 90 C30 120,80 130,70 160 L120 160 L120 0 Z" fill="#96D74C"/><path d="M75 0 C45 30,25 60,35 90 C45 120,95 130,85 160 L120 160 L120 0 Z" fill="none" stroke="#721CB8" stroke-width="1" opacity="0.6"/></svg>
+        <div class="course-tag"></div>
+        <h3>ESL Online Teaching</h3>
+        <div class="course-tagline">You will go from speaking English to earning from it.</div>
+      </div>
+      <div class="course-body">
+        <p>A complete professional training programme that takes you from knowing English to teaching it online with the credentials, confidence, and platform knowledge to get hired globally.</p>
+        <div class="course-meta"><span class="price">$70</span><span class="badge badge-live">Enrolling Now</span></div>
+        <button class="btn-start" onclick="showPage('esl')" style="width:100%;">Enroll Now →</button>
+      </div>
+    </div>
+    <div class="course-card">
+      <div class="course-top">
+        <svg class="course-top-wave" viewBox="0 0 120 160" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><path d="M60 0 C30 30,10 60,20 90 C30 120,80 130,70 160 L120 160 L120 0 Z" fill="#96D74C"/><path d="M75 0 C45 30,25 60,35 90 C45 120,95 130,85 160 L120 160 L120 0 Z" fill="none" stroke="#721CB8" stroke-width="1" opacity="0.6"/></svg>
+        <div class="course-tag"></div>
+        <h3>Professional Voiceover</h3>
+        <div class="course-tagline">You will turn your voice into a scalable income stream.</div>
+      </div>
+      <div class="course-body">
+        <p>Know the industry, do the recordings, become the talent, have the clients. Built for creatives ready to monetise what they already have.</p>
+        <div class="course-meta"><span class="price">TBA</span><span class="badge badge-soon">Coming Soon</span></div>
+        <button class="btn-waitlist" onclick="showPage('voiceover')" style="width:100%;margin-top:.5rem;">Join Waitlist</button>
+      </div>
+    </div>
+    <div class="course-card">
+      <div class="course-top">
+        <svg class="course-top-wave" viewBox="0 0 120 160" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><path d="M60 0 C30 30,10 60,20 90 C30 120,80 130,70 160 L120 160 L120 0 Z" fill="#96D74C"/><path d="M75 0 C45 30,25 60,35 90 C45 120,95 130,85 160 L120 160 L120 0 Z" fill="none" stroke="#721CB8" stroke-width="1" opacity="0.6"/></svg>
+        <div class="course-tag"></div>
+        <h3>Project Management for Beginners</h3>
+        <div class="course-tagline">You will manage projects with clarity, not chaos.</div>
+      </div>
+      <div class="course-body">
+        <p>Know the frameworks, do the planning, become the person teams rely on, have the career that reflects it. No jargon. No confusion.</p>
+        <div class="course-meta"><span class="price">TBA</span><span class="badge badge-soon">Coming Soon</span></div>
+        <button class="btn-waitlist" onclick="showPage('pm')" style="width:100%;margin-top:.5rem;">Join Waitlist</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="b2b">
+  <svg class="b2b-wave-left" viewBox="0 0 220 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><path d="M110 0 C60 80,20 140,50 220 C80 300,180 340,160 440 C140 540,60 580,80 650 L220 650 L220 0 Z" fill="#96D74C"/><path d="M128 0 C78 80,38 140,68 220 C98 300,198 340,178 440 C158 540,78 580,98 650 L220 650 L220 0 Z" fill="none" stroke="#721CB8" stroke-width="1.5" opacity="0.7"/></svg>
+  <svg class="b2b-wave-right" viewBox="0 0 180 400" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><path d="M90 0 C50 60,10 100,30 170 C50 240,140 270,120 340 C100 410,40 440,60 480 L180 480 L180 0 Z" fill="#96D74C"/><path d="M106 0 C66 60,26 100,46 170 C66 240,156 270,136 340 C116 410,56 440,76 480 L180 480 L180 0 Z" fill="none" stroke="#721CB8" stroke-width="1.2" opacity="0.6"/></svg>
+  <div class="b2b-inner">
+    <div class="section-label">For Organisations</div>
+    <h2 class="section-h2">Your team knows more.<br><em>Your numbers move.</em></h2>
+    <div class="b2b-grid">
+      <div class="b2b-text">
+        <p>Every performance gap in your organisation is a knowledge gap in disguise. <strong>Tall Bridge builds the curriculum that closes it.</strong></p>
+        <p>We partner with companies to design and produce bespoke eLearning — custom to your industry, your people, and the specific behavioural change you need to see.</p>
+        <p>You tell us what needs to change in your team. We build the course that changes it.</p>
+        <button class="btn-outline-lime" style="margin-top:.5rem;">Start a Conversation →</button>
+      </div>
+      <div>
+        <div class="outcomes">
+          <div class="outcome"><div class="outcome-label">Skill gap</div><p>Your team lacks a specific capability. <strong>We build the course that installs it.</strong></p></div>
+          <div class="outcome"><div class="outcome-label">Onboarding</div><p>New hires take too long to ramp up. <strong>We build the programme that accelerates them.</strong></p></div>
+          <div class="outcome"><div class="outcome-label">Compliance &amp; standards</div><p>You need your people to follow a process. <strong>We build the training that makes it stick.</strong></p></div>
+        </div>
+        <div class="process">
+          <div class="step"><div class="step-num">1</div><div><h4>Discovery</h4><p>We define the gap and the desired change.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div><h4>Curriculum Design</h4><p>Modules, outcomes, assessments mapped to your goals.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div><h4>Production</h4><p>Videos, voiceovers, quizzes built in your brand.</p></div></div>
+          <div class="step"><div class="step-num">4</div><div><h4>Delivery</h4><p>Hosted and launched. We support you through go live.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <svg class="cta-wave" viewBox="0 0 220 500" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><path d="M110 0 C60 70,20 120,40 200 C60 280,160 310,140 400 C120 480,50 510,70 560 L220 560 L220 0 Z" fill="#721CB8"/><path d="M126 0 C76 70,36 120,56 200 C76 280,176 310,156 400 C136 480,66 510,86 560 L220 560 L220 0 Z" fill="none" stroke="#421869" stroke-width="1.2" opacity="0.6"/></svg>
+  <svg class="cta-wave2" viewBox="0 0 200 500" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><path d="M100 0 C55 70,15 120,35 200 C55 280,150 310,130 400 C110 480,45 510,65 560 L200 560 L200 0 Z" fill="#721CB8"/></svg>
+  <h2>Ready to cross the bridge?</h2>
+  <p>Individual learner or growing organisation the bridge is built. Come cross it.</p>
+  <div class="cta-btns">
+    <button class="btn-cta-main" onclick="showPage('courses')">Browse Courses →</button>
+    <button class="btn-cta-ghost">Build Training for My Organisation</button>
+  </div>
+</section>
+<footer>
+  <div class="footer-brand">Tall Bridge<span>.</span> Institute</div>
+  <p>Know, Do, Be, Have... More. &copy; 2025 Tall Bridge Institute.</p>
+  <p>hello@tallbridgeinstitute.com</p>
+</footer>
+</div>
+
+<!-- ════════════ COURSES LIST PAGE ════════════ -->
+<div id="page-courses" class="page">
+<section class="courses-hero">
+  <svg class="courses-hero-wave" viewBox="0 0 300 500" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <path d="M150 0 C100 70,40 110,60 190 C80 270,180 300,160 390 C140 480,60 510,80 550 L300 550 L300 0 Z" fill="#96D74C"/>
+    <path d="M168 0 C118 70,58 110,78 190 C98 270,198 300,178 390 C158 480,78 510,98 550 L300 550 L300 0 Z" fill="none" stroke="#721CB8" stroke-width="1.5" opacity="0.6"/>
+  </svg>
+  <div class="courses-hero-inner">
+    <div class="eyebrow">Our Courses</div>
+    <h1>Every course built<br>around <em>one outcome</em>.</h1>
+    <p>Pick the change you want to make. We will build the bridge to get you there.</p>
+  </div>
+</section>
+<section class="courses-main">
+  <div class="courses-list">
+
+    <!-- ESL -->
+    <div class="clist-card" id="card-esl">
+      <div class="clist-top" onclick="toggleCard('esl')">
+        <div class="clist-left">
+          <div class="clist-icon">🎓</div>
+          <div class="clist-title-block">
+            <h3>ESL Online Teaching</h3>
+            <p>You will go from speaking English to earning from it.</p>
+          </div>
+        </div>
+        <div class="clist-right">
+          <span class="price">From $70 </span>
+          <span class="badge badge-live">Enrolling Now</span>
+          <span class="clist-chevron">⌄</span>
+        </div>
+      </div>
+      <div class="clist-body">
+        <div class="clist-body-inner">
+          <p class="clist-desc">A complete professional training programme that takes you from knowing English to teaching it online with the credentials, confidence, and platform knowledge to get hired by employers globally.</p>
+          <div class="clist-action">
+            <button class="btn-start" onclick="showPage('esl')">Register Now →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VOICEOVER -->
+    <div class="clist-card" id="card-voiceover">
+      <div class="clist-top" onclick="toggleCard('voiceover')">
+        <div class="clist-left">
+          <div class="clist-icon">🎙️</div>
+          <div class="clist-title-block">
+            <h3>Professional Voiceover</h3>
+            <p>You will turn your voice into a scalable income stream.</p>
+          </div>
+        </div>
+        <div class="clist-right">
+          <span class="price">TBA</span>
+          <span class="badge badge-soon">Coming Soon</span>
+          <span class="clist-chevron">⌄</span>
+        </div>
+      </div>
+      <div class="clist-body">
+        <div class="clist-body-inner">
+          <p class="clist-desc">Know the industry, do the recordings, become the talent, have the clients. Built for creatives ready to monetise what they already have. Details coming soon.</p>
+          <div class="clist-action">
+            <button class="btn-waitlist" onclick="showPage('voiceover')">Join Waitlist</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PM -->
+    <div class="clist-card" id="card-pm">
+      <div class="clist-top" onclick="toggleCard('pm')">
+        <div class="clist-left">
+          <div class="clist-icon">📋</div>
+          <div class="clist-title-block">
+            <h3>Project Management for Beginners</h3>
+            <p>You will manage projects with clarity, not chaos.</p>
+          </div>
+        </div>
+        <div class="clist-right">
+          <span class="price">TBA</span>
+          <span class="badge badge-soon">Coming Soon</span>
+          <span class="clist-chevron">⌄</span>
+        </div>
+      </div>
+      <div class="clist-body">
+        <div class="clist-body-inner">
+          <p class="clist-desc">Know the frameworks, do the planning, become the person teams rely on, have the career that reflects it. No jargon. No confusion. Details coming soon.</p>
+          <div class="clist-action">
+            <button class="btn-waitlist" onclick="showPage('pm')">Join Waitlist</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+<footer>
+  <div class="footer-brand">Tall Bridge<span>.</span> Institute</div>
+  <p>Know, Do, Be, Have... More. &copy; 2025 Tall Bridge Institute.</p>
+  <p>hello@tallbridgeinstitute.com</p>
+</footer>
+</div>
+
+<!-- ════════════ ESL DETAIL PAGE ════════════ -->
+<div id="page-esl" class="page">
+<section class="detail-hero">
+  <svg class="detail-hero-wave" viewBox="0 0 300 500" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <path d="M150 0 C100 70,40 110,60 190 C80 270,180 300,160 390 C140 480,60 510,80 550 L300 550 L300 0 Z" fill="#96D74C"/>
+    <path d="M168 0 C118 70,58 110,78 190 C98 270,198 300,178 390 C158 480,78 510,98 550 L300 550 L300 0 Z" fill="none" stroke="#721CB8" stroke-width="1.5" opacity="0.6"/>
+  </svg>
+  <div class="detail-hero-inner">
+    <div class="detail-back" onclick="showPage('courses')">← Back to Courses</div>
+    <div class="eyebrow">ESL Online Teaching</div>
+    <h1>From speaking English<br>to <em>earning from it.</em></h1>
+    <p class="detail-hero-sub">A complete professional training programme that takes you from knowing English to teaching it online with the credentials, confidence, and platform knowledge to get hired by employers globally.</p>
+    <div class="detail-meta-strip">
+      <div class="detail-meta-item"><strong>Duration</strong><span>4 weeks</span></div>
+      <div class="detail-meta-item"><strong>Format</strong><span>Self-paced + 2 live sessions</span></div>
+      <div class="detail-meta-item"><strong>Certificate</strong><span>Yes</span></div>
+      <div class="detail-meta-item"><strong>Status</strong><span>Enrolling Now</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="detail-body">
+  <div class="detail-main">
+    <div class="detail-section">
+      <h2>What you will learn</h2>
+      <div class="module-list">
+        <div class="module-item"><span class="module-num">1</span>Your teaching identity, confidence &amp; the Nigerian teacher narrative</div>
+        <div class="module-item"><span class="module-num">2</span>TEFL certification — what it covers and how to complete it without falling behind</div>
+        <div class="module-item"><span class="module-num">3</span>Pedagogy, classroom management &amp; vocal delivery for online teaching</div>
+        <div class="module-item"><span class="module-num">4</span>Platform mastery — ClassIn, Zoom &amp; VoovMeeting</div>
+        <div class="module-item"><span class="module-num">5</span>Your introductory video, teaching CV &amp; how to get hired by global employers</div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <h2>Employment support included</h2>
+      <div class="employ-list">
+        <div class="employ-item"><span class="employ-check">✓</span>Access to Tall Bridge employer partner network</div>
+        <div class="employ-item"><span class="employ-check">✓</span>CV and teaching profile review before you apply</div>
+        <div class="employ-item"><span class="employ-check">✓</span>Introductory video coaching and personalised feedback</div>
+        <div class="employ-item"><span class="employ-check">✓</span>Two live practice teaching sessions included in the programme</div>
+        <div class="employ-item"><span class="employ-check">✓</span>Graduate community and ongoing post-course support</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="detail-sidebar">
+    <div class="pricing-card">
+      <div class="pricing-card-top">
+        <svg class="pricing-card-top-wave" viewBox="0 0 100 130" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><path d="M50 0 C25 25,5 45,15 75 C25 105,75 110,65 130 L100 130 L100 0 Z" fill="#96D74C" opacity="0.5"/></svg>
+        <h3>ESL Online Teaching</h3>
+        <p>Choose your registration type</p>
+      </div>
+      <div class="pricing-card-body">
+        <div class="pricing-row early">
+          <span class="pricing-row-label early-col">Early Bird <span class="pr-badge">Limited</span></span>
+          <span class="pricing-row-amt">$70</span>
+        </div>
+        <div class="pricing-row regular">
+          <span class="pricing-row-label">Regular Registration</span>
+          <span class="pricing-row-amt">$100</span>
+        </div>
+      </div>
+      <div class="pricing-card-footer">
+       <a href="auth.html"> <button class="btn-start-full">Register Now →</button></a>
+        <p class="pricing-note">Early bird pricing is available for a limited number of spots. Both options include the full course, employment support, and certificate.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="testimonials">
+  <div class="section-label">What Our Students Say</div>
+  <h2 class="section-h2">The bridge <em>works</em>.</h2>
+  <div class="testi-grid">
+    <div class="testi-card"><div class="testi-text">"I did not think I had what it takes to teach online. Three months after completing the ESL course, I have three regular students and I am earning in dollars every week."</div><div class="testi-name">Chisom A.</div><div class="testi-role">ESL Teacher Lagos</div></div>
+    <div class="testi-card"><div class="testi-text">"The way the course is structured — module by module, with real practice — made everything click. I went from zero to hired in six weeks."</div><div class="testi-name">Emmanuel G.</div><div class="testi-role">ESL Teacher Abuja</div></div>
+    <div class="testi-card"><div class="testi-text">"I have taken a lot of online courses. This one was different. The content was simple, but it changed how I think about myself as a professional."</div><div class="testi-name">Aderonke P.</div><div class="testi-role">ESL Teacher Port Harcourt</div></div>
+  </div>
+</section>
+
+<section class="faq">
+  <h2><div class="section-label">Common Questions</div></h2>
+  <h2 class="section-h2">Before you <em>start</em>.</h2>
+  <div class="faq-list">
+    <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Do I need a teaching degree? <span class="faq-icon">+</span></button><div class="faq-a"><p>No. You need to speak English fluently and be willing to learn. The course is designed for people with zero teaching experience — it builds your confidence, credentials, and skills from the ground up.</p></div></div>
+    <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">How long does the course take? <span class="faq-icon">+</span></button><div class="faq-a"><p>The ESL course runs over 4 weeks. It is self-paced through the modules, with two live practice sessions scheduled within the cycle — where you practise teaching in a real virtual classroom before you go out and get hired.</p></div></div>
+    <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">What is the difference between early bird and regular pricing? <span class="faq-icon">+</span></button><div class="faq-a"><p>Early bird pricing of $70 is available for a limited number of spots. Once those are filled, the price moves to $100. Both get the exact same course, employment support, and certificate.</p></div></div>
+    <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Can I pay in instalments? <span class="faq-icon">+</span></button><div class="faq-a"><p>We are working on payment plan options. Reach out to us at hello@tallbridgeinstitute.com and we will find something that works for you.</p></div></div>
+  </div>
+</section>
+<footer>
+  <div class="footer-brand">Tall Bridge<span>.</span> Institute</div>
+  <p>Know, Do, Be, Have... More. &copy; 2025 Tall Bridge Institute.</p>
+ <a href="mailto:hello@tallbridgeinstitute.com"> <p>hello@tallbridgeinstitute.com</p></a>
+</footer>
+</div>
+
+<!-- ════════════ VOICEOVER DETAIL ════════════ -->
+<div id="page-voiceover" class="page">
+<section class="detail-hero">
+  <svg class="detail-hero-wave" viewBox="0 0 300 500" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><path d="M150 0 C100 70,40 110,60 190 C80 270,180 300,160 390 C140 480,60 510,80 550 L300 550 L300 0 Z" fill="#96D74C"/><path d="M168 0 C118 70,58 110,78 190 C98 270,198 300,178 390 C158 480,78 510,98 550 L300 550 L300 0 Z" fill="none" stroke="#721CB8" stroke-width="1.5" opacity="0.6"/></svg>
+  <div class="detail-hero-inner">
+    <div class="detail-back" onclick="showPage('courses')">← Back to Courses</div>
+    <div class="eyebrow">Professional Voiceover</div>
+    <h1>Turn your voice into<br>an <em>income stream.</em></h1>
+    <p class="detail-hero-sub">Know the industry, do the recordings, become the talent, have the clients. Built for creatives ready to monetise what they already have.</p>
+  </div>
+</section>
+<div class="coming-detail">
+  <div class="coming-detail-icon">🎙️</div>
+  <h2>This course is coming soon.</h2>
+  <p>We are building something great. Drop your email below and be the first to know when Professional Voiceover launches — including early bird pricing.</p>
+  <button class="btn-start">Join the Waitlist →</button>
+</div>
+<footer>
+  <div class="footer-brand">Tall Bridge<span>.</span> Institute</div>
+  <p>Know, Do, Be, Have... More. &copy; 2025 Tall Bridge Institute.</p>
+ <a href="mailto:hello@tallbridgeinstitute.com"> <p>hello@tallbridgeinstitute.com</p></a>
+</footer>
+</div>
+
+<!-- ════════════ PM DETAIL ════════════ -->
+<div id="page-pm" class="page">
+<section class="detail-hero">
+  <svg class="detail-hero-wave" viewBox="0 0 300 500" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><path d="M150 0 C100 70,40 110,60 190 C80 270,180 300,160 390 C140 480,60 510,80 550 L300 550 L300 0 Z" fill="#96D74C"/><path d="M168 0 C118 70,58 110,78 190 C98 270,198 300,178 390 C158 480,78 510,98 550 L300 550 L300 0 Z" fill="none" stroke="#721CB8" stroke-width="1.5" opacity="0.6"/></svg>
+  <div class="detail-hero-inner">
+    <div class="detail-back" onclick="showPage('courses')">← Back to Courses</div>
+    <div class="eyebrow">Project Management for Beginners</div>
+    <h1>Manage projects with<br><em>clarity, not chaos.</em></h1>
+    <p class="detail-hero-sub">Know the frameworks, do the planning, become the person teams rely on, have the career that reflects it. No jargon. No confusion.</p>
+  </div>
+</section>
+<div class="coming-detail">
+  <div class="coming-detail-icon">📋</div>
+  <h2>This course is coming soon.</h2>
+  <p>We are building something great. Drop your email below and be the first to know when Project Management for Beginners launches — including early bird pricing.</p>
+  <button class="btn-start">Join the Waitlist →</button>
+</div>
+
+</div>
+
+</div>
+
+<script src ="script.js"></script>
+</body>
+</html>
