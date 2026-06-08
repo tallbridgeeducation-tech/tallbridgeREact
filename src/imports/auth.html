@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login / Sign Up — Tall Bridge Institute</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { overflow-x: hidden; }
+
+    .auth-page {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    /* ── Left brand panel ── */
+    .auth-brand {
+      position: relative;
+      background: #0d0d0d;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 2.5rem;
+      overflow: hidden;
+      min-height: 100vh;
+    }
+    .auth-brand-wave {
+      position: absolute; right: 0; top: 0;
+      height: 100%; width: 55%;
+      pointer-events: none; z-index: 0;
+    }
+    .auth-brand-logo {
+      position: relative; z-index: 1;
+      display: flex; align-items: center;
+      gap: .75rem; text-decoration: none; cursor: pointer;
+    }
+    .auth-brand-logo img { height: 36px; width: auto; }
+    .auth-brand-logo-text {
+      font-family: 'Lora', serif; font-size: 1.1rem;
+      font-weight: 600; color: #fff; line-height: 1.1;
+    }
+    .auth-brand-logo-text span { color: #96D74C; }
+    .auth-brand-logo-sub {
+      font-family: 'DM Sans', sans-serif; font-size: .65rem;
+      color: rgba(255,255,255,.45); letter-spacing: .12em;
+      text-transform: uppercase; display: block;
+    }
+    .auth-brand-body {
+      position: relative; z-index: 1; flex: 1;
+      display: flex; flex-direction: column;
+      justify-content: center; gap: 2rem;
+    }
+    .auth-brand-heading {
+      font-family: 'Lora', serif;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 600; color: #fff; line-height: 1.25;
+    }
+    .auth-brand-heading em { font-style: italic; color: #96D74C; }
+    .auth-brand-sub {
+      font-family: 'DM Sans', sans-serif; font-size: .95rem;
+      color: rgba(255,255,255,.55); line-height: 1.7;
+      max-width: 340px; margin-top: 1rem;
+    }
+    .auth-course-context {
+      background: rgba(150,215,76,.08);
+      border: 1px solid rgba(150,215,76,.25);
+      border-radius: 12px; padding: 1.25rem 1.5rem; display: none;
+    }
+    .auth-course-context.visible { display: block; }
+    .auth-course-context-label {
+      font-family: 'DM Sans', sans-serif; font-size: .7rem;
+      font-weight: 500; color: #96D74C; letter-spacing: .1em;
+      text-transform: uppercase; margin-bottom: .4rem;
+    }
+    .auth-course-context-name {
+      font-family: 'Lora', serif; font-size: 1.05rem;
+      font-weight: 600; color: #fff; margin-bottom: .25rem;
+    }
+    .auth-course-context-price {
+      font-family: 'DM Sans', sans-serif; font-size: .85rem;
+      color: rgba(255,255,255,.5);
+    }
+    .auth-course-context-price strong { color: #96D74C; font-size: 1rem; }
+    .auth-trust { display: flex; flex-direction: column; gap: .6rem; }
+    .auth-trust-item { display: flex; align-items: center; gap: .6rem; }
+    .auth-trust-item span {
+      font-family: 'DM Sans', sans-serif; font-size: .82rem;
+      color: rgba(255,255,255,.5);
+    }
+    .auth-brand-footer { position: relative; z-index: 1; }
+    .auth-brand-footer p {
+      font-family: 'DM Sans', sans-serif; font-size: .75rem;
+      color: rgba(255,255,255,.25);
+    }
+
+    /* ── Right form panel ── */
+    .auth-form-panel {
+      background: #fff;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      padding: 3rem 2.5rem; min-height: 100vh;
+    }
+    .auth-form-inner { width: 100%; max-width: 400px; }
+
+    .auth-mobile-course {
+      display: none;
+      background: #f0fbe0;
+      border: 1px solid rgba(114,28,184,.15);
+      border-radius: 10px; padding: .85rem 1rem;
+      margin-bottom: 1.75rem;
+    }
+    .auth-mobile-course.visible { display: block; }
+    .auth-mobile-course-label {
+      font-family: 'DM Sans', sans-serif; font-size: .65rem;
+      font-weight: 500; color: #721CB8; letter-spacing: .1em;
+      text-transform: uppercase; margin-bottom: .25rem;
+    }
+    .auth-mobile-course-name {
+      font-family: 'DM Sans', sans-serif; font-size: .9rem;
+      font-weight: 500; color: #0d0d0d;
+    }
+    .auth-mobile-course-price {
+      font-family: 'DM Sans', sans-serif; font-size: .8rem; color: #555;
+    }
+    .auth-mobile-course-price strong { color: #721CB8; }
+
+    /* ── Tabs ── */
+    .auth-tabs {
+      display: flex; background: #f3f3f3;
+      border-radius: 10px; padding: 4px; margin-bottom: 2rem;
+    }
+    .auth-tab {
+      flex: 1; padding: .6rem 1rem;
+      font-family: 'DM Sans', sans-serif; font-size: .9rem;
+      font-weight: 500; color: #888; border: none;
+      background: transparent; border-radius: 7px;
+      cursor: pointer; transition: all .2s; text-align: center;
+    }
+    .auth-tab.active {
+      background: #fff; color: #0d0d0d;
+      box-shadow: 0 1px 4px rgba(0,0,0,.1);
+    }
+
+    /* ── Form heading ── */
+    .auth-form-heading {
+      font-family: 'Lora', serif; font-size: 1.6rem;
+      font-weight: 600; color: #0d0d0d;
+      line-height: 1.25; margin-bottom: .4rem;
+    }
+    .auth-form-heading em { font-style: italic; color: #721CB8; }
+    .auth-form-sub {
+      font-family: 'DM Sans', sans-serif; font-size: .875rem;
+      color: #777; margin-bottom: 1.75rem; line-height: 1.5;
+    }
+
+    /* ── Google button ── */
+    .btn-google {
+      display: flex; align-items: center; justify-content: center;
+      gap: .65rem; width: 100%; padding: .75rem 1rem;
+      background: #fff; border: 1.5px solid #e0e0e0;
+      border-radius: 8px; font-family: 'DM Sans', sans-serif;
+      font-size: .9rem; font-weight: 500; color: #333;
+      cursor: pointer; transition: border-color .2s, box-shadow .2s;
+      text-decoration: none;
+    }
+    .btn-google:hover { border-color: #bbb; box-shadow: 0 2px 8px rgba(0,0,0,.07); }
+    .btn-google svg { flex-shrink: 0; }
+
+    /* ── Divider ── */
+    .auth-divider {
+      display: flex; align-items: center;
+      gap: .75rem; margin: 1.25rem 0;
+    }
+    .auth-divider::before, .auth-divider::after {
+      content: ''; flex: 1; height: 1px; background: #e8e8e8;
+    }
+    .auth-divider span {
+      font-family: 'DM Sans', sans-serif; font-size: .75rem; color: #bbb;
+    }
+
+    /* ── Form fields ── */
+    .auth-form { display: flex; flex-direction: column; gap: 1rem; }
+    .field-group { display: flex; flex-direction: column; gap: .35rem; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+    .field-group label {
+      font-family: 'DM Sans', sans-serif; font-size: .8rem;
+      font-weight: 500; color: #444;
+    }
+    .field-group input {
+      width: 100%; padding: .7rem .9rem;
+      font-family: 'DM Sans', sans-serif; font-size: .9rem;
+      color: #0d0d0d; background: #fafafa;
+      border: 1.5px solid #e8e8e8; border-radius: 8px;
+      outline: none; transition: border-color .2s, box-shadow .2s;
+    }
+    .field-group input:focus {
+      border-color: #721CB8; background: #fff;
+      box-shadow: 0 0 0 3px rgba(114,28,184,.08);
+    }
+    .field-group input.error { border-color: #e53e3e; }
+    .field-error {
+      font-family: 'DM Sans', sans-serif; font-size: .75rem;
+      color: #e53e3e; display: none;
+    }
+    .field-error.visible { display: block; }
+    .forgot-link {
+      font-family: 'DM Sans', sans-serif; font-size: .78rem;
+      color: #721CB8; text-decoration: none;
+      text-align: right; display: block; margin-top: -.5rem;
+      cursor: pointer;
+    }
+    .forgot-link:hover { text-decoration: underline; }
+
+    /* ── Submit buttons ── */
+    .btn-auth-submit {
+      width: 100%; padding: .85rem 1.5rem;
+      background: #0d0d0d; color: #fff;
+      font-family: 'DM Sans', sans-serif; font-size: .95rem;
+      font-weight: 500; border: none; border-radius: 8px;
+      cursor: pointer; transition: background .2s, transform .1s;
+      margin-top: .25rem;
+    }
+    .btn-auth-submit:hover { background: #222; }
+    .btn-auth-submit:active { transform: scale(.99); }
+    .btn-auth-submit:disabled { opacity: .6; cursor: not-allowed; }
+    .btn-auth-submit.lime { background: #96D74C; color: #0d0d0d; }
+    .btn-auth-submit.lime:hover { background: #86c43c; }
+
+    /* ── Switch link ── */
+    .auth-switch {
+      font-family: 'DM Sans', sans-serif; font-size: .82rem;
+      color: #888; text-align: center; margin-top: 1.25rem;
+    }
+    .auth-switch a {
+      color: #721CB8; font-weight: 500;
+      text-decoration: none; cursor: pointer;
+    }
+    .auth-switch a:hover { text-decoration: underline; }
+
+    /* ── Panels ── */
+    .auth-panel { display: none; }
+    .auth-panel.active { display: block; }
+
+    /* ── Password strength ── */
+    .password-strength {
+      height: 3px; border-radius: 2px;
+      background: #eee; margin-top: .4rem; overflow: hidden;
+    }
+    .password-strength-bar {
+      height: 100%; width: 0%;
+      border-radius: 2px; transition: width .3s, background .3s;
+    }
+    .password-strength-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: .7rem; color: #aaa; margin-top: .25rem;
+    }
+
+    /* ── Terms ── */
+    .auth-terms {
+      font-family: 'DM Sans', sans-serif; font-size: .72rem;
+      color: #aaa; text-align: center;
+      line-height: 1.5; margin-top: .5rem;
+    }
+    .auth-terms a { color: #721CB8; text-decoration: none; }
+    .auth-terms a:hover { text-decoration: underline; }
+
+    /* ── General form error ── */
+    .auth-form-error {
+      font-family: 'DM Sans', sans-serif; font-size: .82rem;
+      color: #e53e3e; text-align: center;
+      background: #fff5f5; border: 1px solid #fed7d7;
+      border-radius: 8px; padding: .65rem 1rem;
+      display: none; margin-top: .5rem;
+    }
+    .auth-form-error.visible { display: block; }
+
+    /* ── Success state ── */
+    .auth-success {
+      display: none; flex-direction: column;
+      align-items: center; text-align: center;
+      gap: 1rem; padding: 2rem 0;
+    }
+    .auth-success.visible { display: flex; }
+    .auth-success-icon {
+      width: 56px; height: 56px; background: #f0fbe0;
+      border-radius: 50%; display: flex;
+      align-items: center; justify-content: center;
+    }
+    .auth-success h3 {
+      font-family: 'Lora', serif; font-size: 1.3rem;
+      font-weight: 600; color: #0d0d0d;
+    }
+    .auth-success p {
+      font-family: 'DM Sans', sans-serif; font-size: .875rem;
+      color: #777; max-width: 300px; line-height: 1.6;
+    }
+
+    /* ── Nav mobile toggle ── */
+    .nav-mobile-toggle {
+      display: none; background: none; border: none;
+      cursor: pointer; padding: .25rem;
+    }
+    .nav-mobile-toggle span {
+      display: block; width: 22px; height: 2px;
+      background: currentColor; margin: 4px 0; transition: all .2s;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .auth-page { grid-template-columns: 1fr; }
+      .auth-brand { display: none; }
+      .auth-form-panel {
+        padding: 2rem 1.5rem;
+        min-height: calc(100vh - 70px);
+        justify-content: flex-start;
+        padding-top: 2.5rem;
+      }
+    }
+    @media (max-width: 480px) {
+      .auth-form-panel { padding: 1.5rem 1.25rem; }
+      .auth-form-inner { max-width: 100%; }
+      .field-row { grid-template-columns: 1fr; }
+      .auth-form-heading { font-size: 1.4rem; }
+    }
+    @media (max-width: 768px) {
+      nav { position: relative; }
+      .nav-links {
+        display: none; position: absolute;
+        top: 100%; left: 0; right: 0;
+        background: #fff; flex-direction: column;
+        padding: 0; border-top: 1px solid #ede4f8;
+        box-shadow: 0 8px 24px rgba(66,24,105,.1); z-index: 200;
+      }
+      .nav-links.open { display: flex; }
+      .nav-links li a {
+        display: block; padding: .9rem 1.5rem;
+        border-bottom: 1px solid #f3eeff; color: #421869;
+      }
+      .nav-auth { display: none; }
+      .nav-mobile-toggle { display: block; color: #421869; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-logo" onclick="window.location.href='index.html'">
+      <img src="logo.png" alt="Tall Bridge Institute">
+      <div>
+        <div class="nav-logo-text">Tall Bridge<span>.</span></div>
+        <span class="nav-logo-sub">Institute</span>
+      </div>
+    </div>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="index.html">Courses</a></li>
+    </ul>
+    <div class="nav-auth">
+      <a href="auth.html?mode=login" class="btn-ghost">Login</a>
+      <a href="auth.html?mode=signup" class="btn-dark">Sign Up</a>
+    </div>
+    <button class="nav-mobile-toggle" id="nav-toggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="auth-page">
+
+    <!-- Left: Brand panel -->
+    <div class="auth-brand">
+      <svg class="auth-brand-wave" viewBox="0 0 300 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <path d="M150 0 C100 100,40 160,60 270 C80 380,200 420,180 550 C160 680,60 730,80 800 L300 800 L300 0 Z" fill="#96D74C" opacity="0.15"/>
+        <path d="M170 0 C120 100,60 160,80 270 C100 380,220 420,200 550 C180 680,80 730,100 800 L300 800 L300 0 Z" fill="none" stroke="#721CB8" stroke-width="1.5" opacity="0.3"/>
+      </svg>
+      <a class="auth-brand-logo" href="index.html">
+        <img src="logo.png" alt="Tall Bridge Institute">
+        <div>
+          <div class="auth-brand-logo-text">Tall Bridge<span>.</span></div>
+          <span class="auth-brand-logo-sub">Institute</span>
+        </div>
+      </a>
+      <div class="auth-brand-body">
+        <div>
+          <h2 class="auth-brand-heading">The bridge to<br>where you <em>need to be.</em></h2>
+          <p class="auth-brand-sub">Join thousands building real skills, real income, and real careers through Tall Bridge.</p>
+        </div>
+        <div class="auth-course-context" id="brand-course-context">
+          <div class="auth-course-context-label">You're enrolling in</div>
+          <div class="auth-course-context-name" id="brand-course-name"></div>
+          <div class="auth-course-context-price" id="brand-course-price"></div>
+        </div>
+        <div class="auth-trust">
+          <div class="auth-trust-item">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.5" stroke="#96D74C" stroke-opacity="0.5"/><path d="M5 8l2 2 4-4" stroke="#96D74C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Certificate included with every course</span>
+          </div>
+          <div class="auth-trust-item">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.5" stroke="#96D74C" stroke-opacity="0.5"/><path d="M5 8l2 2 4-4" stroke="#96D74C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Employment support included</span>
+          </div>
+          <div class="auth-trust-item">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.5" stroke="#96D74C" stroke-opacity="0.5"/><path d="M5 8l2 2 4-4" stroke="#96D74C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Pay only after creating your account</span>
+          </div>
+        </div>
+      </div>
+      <div class="auth-brand-footer"><p>Know, Do, Be, Have... More.</p></div>
+    </div>
+
+    <!-- Right: Form panel -->
+    <div class="auth-form-panel">
+      <div class="auth-form-inner">
+
+        <!-- Mobile course strip -->
+        <div class="auth-mobile-course" id="mobile-course-context">
+          <div class="auth-mobile-course-label">Enrolling in</div>
+          <div class="auth-mobile-course-name" id="mobile-course-name"></div>
+          <div class="auth-mobile-course-price" id="mobile-course-price"></div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="auth-tabs" role="tablist">
+          <button class="auth-tab active" id="tab-login" role="tab" onclick="switchTab('login')">Log in</button>
+          <button class="auth-tab" id="tab-signup" role="tab" onclick="switchTab('signup')">Sign up</button>
+        </div>
+
+        <!-- LOGIN -->
+        <div class="auth-panel active" id="panel-login">
+          <h2 class="auth-form-heading">Welcome <em>back.</em></h2>
+          <p class="auth-form-sub">Log in to continue your learning journey.</p>
+          <a href="#" class="btn-google" onclick="handleGoogle(event)">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/><path d="M3.964 10.712A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.712V4.956H.957A9.009 9.009 0 000 9c0 1.452.348 2.827.957 4.044l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.956L3.964 6.288C4.672 4.161 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
+            Continue with Google
+          </a>
+          <div class="auth-divider"><span>or</span></div>
+          <form class="auth-form" id="form-login" novalidate onsubmit="handleLogin(event)">
+            <div class="field-group">
+              <label for="login-email">Email address</label>
+              <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email">
+              <span class="field-error" id="login-email-error"></span>
+            </div>
+            <div class="field-group">
+              <label for="login-password">Password</label>
+              <input type="password" id="login-password" placeholder="Your password" autocomplete="current-password">
+              <span class="field-error" id="login-password-error"></span>
+              <a class="forgot-link" onclick="handleForgotPassword()">Forgot your password?</a>
+            </div>
+            <button type="submit" class="btn-auth-submit" id="btn-login">Log in →</button>
+            <div class="auth-form-error" id="login-error"></div>
+          </form>
+          <p class="auth-switch">Don't have an account? <a onclick="switchTab('signup')">Sign up</a></p>
+        </div>
+
+        <!-- SIGNUP -->
+        <div class="auth-panel" id="panel-signup">
+          <h2 class="auth-form-heading">Create your <em>account.</em></h2>
+          <p class="auth-form-sub">One account. Every course you'll ever need.</p>
+          <a href="#" class="btn-google" onclick="handleGoogle(event)">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/><path d="M3.964 10.712A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.712V4.956H.957A9.009 9.009 0 000 9c0 1.452.348 2.827.957 4.044l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.956L3.964 6.288C4.672 4.161 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
+            Sign up with Google
+          </a>
+          <div class="auth-divider"><span>or</span></div>
+          <form class="auth-form" id="form-signup" novalidate onsubmit="handleSignup(event)">
+            <div class="field-row">
+              <div class="field-group">
+                <label for="signup-firstname">First name</label>
+                <input type="text" id="signup-firstname" placeholder="Ada" autocomplete="given-name">
+                <span class="field-error" id="signup-firstname-error"></span>
+              </div>
+              <div class="field-group">
+                <label for="signup-lastname">Last name</label>
+                <input type="text" id="signup-lastname" placeholder="Okafor" autocomplete="family-name">
+                <span class="field-error" id="signup-lastname-error"></span>
+              </div>
+            </div>
+            <div class="field-group">
+              <label for="signup-email">Email address</label>
+              <input type="email" id="signup-email" placeholder="you@example.com" autocomplete="email">
+              <span class="field-error" id="signup-email-error"></span>
+            </div>
+            <div class="field-group">
+              <label for="signup-password">Password</label>
+              <input type="password" id="signup-password" placeholder="Create a password" autocomplete="new-password" oninput="checkPasswordStrength(this.value)">
+              <div class="password-strength"><div class="password-strength-bar" id="strength-bar"></div></div>
+              <div class="password-strength-label" id="strength-label"></div>
+              <span class="field-error" id="signup-password-error"></span>
+            </div>
+            <div class="field-group">
+              <label for="signup-confirm">Confirm password</label>
+              <input type="password" id="signup-confirm" placeholder="Repeat your password" autocomplete="new-password">
+              <span class="field-error" id="signup-confirm-error"></span>
+            </div>
+            <button type="submit" class="btn-auth-submit lime" id="btn-signup">Create account →</button>
+            <div class="auth-form-error" id="signup-error"></div>
+            <p class="auth-terms">By signing up you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</p>
+          </form>
+          <p class="auth-switch">Already have an account? <a onclick="switchTab('login')">Log in</a></p>
+        </div>
+
+        <!-- SUCCESS -->
+        <div class="auth-success" id="auth-success">
+          <div class="auth-success-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M5 12l5 5L20 7" stroke="#96D74C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3>You're in.</h3>
+          <p id="success-message">Taking you to the next step...</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ── Supabase init ─────────────────────────────────── */
+    const SUPA_URL = 'https://xhxchpsfgxrzpyndxdyv.supabase.co';
+    const SUPA_KEY = 'sb_publishable_3zfwFx2JSKvI2EQSl6I_uA_q3yJPgG8';
+    const { createClient } = supabase;
+    const db = createClient(SUPA_URL, SUPA_KEY);
+
+    /* ── Course data ───────────────────────────────────── */
+    const COURSES = {
+      esl:       { name: 'ESL Online Teaching',              price: '$70',  badge: 'Enrolling Now' },
+      voiceover: { name: 'Professional Voiceover',           price: 'TBA',  badge: 'Coming Soon'   },
+      pm:        { name: 'Project Management for Beginners', price: 'TBA',  badge: 'Coming Soon'   },
+    };
+
+    /* ── URL params ────────────────────────────────────── */
+    const params = new URLSearchParams(window.location.search);
+    const mode   = params.get('mode')   || 'login';
+    const course = params.get('course') || '';
+
+    /* ── On load ───────────────────────────────────────── */
+    document.addEventListener('DOMContentLoaded', async function () {
+
+      /* If already logged in — skip straight to destination */
+      const { data: { session } } = await db.auth.getSession();
+      if (session) { redirectAfterAuth(); return; }
+
+      /* Set starting tab */
+      if (mode === 'signup') switchTab('signup');
+
+      /* Show course context */
+      if (course && COURSES[course]) {
+        const c = COURSES[course];
+        const html = 'From <strong>' + c.price + '</strong> · ' + c.badge;
+        document.getElementById('brand-course-name').textContent = c.name;
+        document.getElementById('brand-course-price').innerHTML  = html;
+        document.getElementById('brand-course-context').classList.add('visible');
+        document.getElementById('mobile-course-name').textContent  = c.name;
+        document.getElementById('mobile-course-price').innerHTML   = html;
+        document.getElementById('mobile-course-context').classList.add('visible');
+      }
+
+      /* Mobile nav */
+      document.getElementById('nav-toggle').addEventListener('click', function () {
+        document.getElementById('nav-links').classList.toggle('open');
+      });
+    });
+
+    /* ── Tab switch ────────────────────────────────────── */
+    function switchTab(tab) {
+      var isLogin = tab === 'login';
+      document.getElementById('tab-login').classList.toggle('active', isLogin);
+      document.getElementById('tab-signup').classList.toggle('active', !isLogin);
+      document.getElementById('panel-login').classList.toggle('active', isLogin);
+      document.getElementById('panel-signup').classList.toggle('active', !isLogin);
+      var url = new URL(window.location.href);
+      url.searchParams.set('mode', tab);
+      window.history.replaceState({}, '', url);
+    }
+
+    /* ── Google OAuth ──────────────────────────────────── */
+    function handleGoogle(e) {
+      e.preventDefault();
+      db.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: 'https://danotech-int.github.io/Tall_Bridge/dashboard.html' }
+      });
+    }
+
+    /* ── Forgot password ───────────────────────────────── */
+    async function handleForgotPassword() {
+      var email = document.getElementById('login-email').value.trim();
+      if (!email) {
+        showFieldError('login-email-error', 'Enter your email above first.');
+        return;
+      }
+      await db.auth.resetPasswordForEmail(email, {
+        redirectTo: 'https://danotech-int.github.io/Tall_Bridge/auth.html?mode=login'
+      });
+      showFormError('login-error', 'Password reset email sent! Check your inbox.', '#509724');
+    }
+
+    /* ── Validation helpers ────────────────────────────── */
+    function isValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+
+    function showFieldError(id, msg) {
+      var el = document.getElementById(id);
+      el.textContent = msg; el.classList.add('visible');
+      var prev = el.previousElementSibling;
+      if (prev && prev.tagName === 'INPUT') prev.classList.add('error');
+    }
+
+    function clearFieldError(id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.classList.remove('visible');
+      var prev = el.previousElementSibling;
+      if (prev && prev.tagName === 'INPUT') prev.classList.remove('error');
+    }
+
+    function showFormError(id, msg, color) {
+      var el = document.getElementById(id);
+      el.textContent = msg;
+      el.style.color = color || '#e53e3e';
+      el.style.background = color ? '#f0fbe0' : '#fff5f5';
+      el.style.borderColor = color ? '#c5e896' : '#fed7d7';
+      el.classList.add('visible');
+    }
+
+    function clearFormError(id) {
+      var el = document.getElementById(id);
+      if (el) el.classList.remove('visible');
+    }
+
+    /* ── Password strength ─────────────────────────────── */
+    function checkPasswordStrength(val) {
+      var bar = document.getElementById('strength-bar');
+      var lbl = document.getElementById('strength-label');
+      var score = 0;
+      if (val.length >= 8)          score++;
+      if (/[A-Z]/.test(val))        score++;
+      if (/[0-9]/.test(val))        score++;
+      if (/[^a-zA-Z0-9]/.test(val)) score++;
+      var levels = [
+        { w:'0%',   bg:'#eee',    t:''       },
+        { w:'25%',  bg:'#e53e3e', t:'Weak'   },
+        { w:'50%',  bg:'#ed8936', t:'Fair'   },
+        { w:'75%',  bg:'#96D74C', t:'Good'   },
+        { w:'100%', bg:'#38a169', t:'Strong' },
+      ];
+      var s = val.length === 0 ? levels[0] : levels[Math.max(1, score)];
+      bar.style.width = s.w; bar.style.background = s.bg;
+      lbl.textContent = s.t; lbl.style.color = s.bg;
+    }
+
+    /* ── LOGIN ─────────────────────────────────────────── */
+    async function handleLogin(e) {
+      e.preventDefault();
+      clearFormError('login-error');
+      var email    = document.getElementById('login-email').value.trim();
+      var password = document.getElementById('login-password').value;
+      var valid    = true;
+
+      clearFieldError('login-email-error');
+      clearFieldError('login-password-error');
+      if (!isValidEmail(email)) { showFieldError('login-email-error', 'Please enter a valid email.'); valid = false; }
+      if (!password)             { showFieldError('login-password-error', 'Password is required.');   valid = false; }
+      if (!valid) return;
+
+      var btn = document.getElementById('btn-login');
+      btn.textContent = 'Logging in...'; btn.disabled = true;
+
+      var result = await db.auth.signInWithPassword({ email: email, password: password });
+
+      if (result.error) {
+        btn.textContent = 'Log in →'; btn.disabled = false;
+        var msg = result.error.message.includes('Invalid')
+          ? 'Incorrect email or password. Please try again.'
+          : result.error.message;
+        showFormError('login-error', msg);
+        return;
+      }
+
+      showSuccess('login');
+    }
+
+    /* ── SIGNUP ────────────────────────────────────────── */
+    async function handleSignup(e) {
+      e.preventDefault();
+      clearFormError('signup-error');
+      var first   = document.getElementById('signup-firstname').value.trim();
+      var last    = document.getElementById('signup-lastname').value.trim();
+      var email   = document.getElementById('signup-email').value.trim();
+      var pass    = document.getElementById('signup-password').value;
+      var confirm = document.getElementById('signup-confirm').value;
+      var valid   = true;
+
+      ['signup-firstname-error','signup-lastname-error','signup-email-error',
+       'signup-password-error','signup-confirm-error'].forEach(clearFieldError);
+
+      if (!first)               { showFieldError('signup-firstname-error', 'Required.');                              valid = false; }
+      if (!last)                { showFieldError('signup-lastname-error',  'Required.');                              valid = false; }
+      if (!isValidEmail(email)) { showFieldError('signup-email-error',     'Please enter a valid email.');            valid = false; }
+      if (pass.length < 8)      { showFieldError('signup-password-error',  'Must be at least 8 characters.');         valid = false; }
+      if (pass !== confirm)     { showFieldError('signup-confirm-error',   'Passwords do not match.');                valid = false; }
+      if (!valid) return;
+
+      var btn = document.getElementById('btn-signup');
+      btn.textContent = 'Creating account...'; btn.disabled = true;
+
+      var result = await db.auth.signUp({
+        email: email,
+        password: pass,
+        options: {
+          data: { first_name: first, last_name: last, full_name: first + ' ' + last },
+          emailRedirectTo: 'https://danotech-int.github.io/Tall_Bridge/dashboard.html'
+        }
+      });
+
+      if (result.error) {
+        btn.textContent = 'Create account →'; btn.disabled = false;
+        showFormError('signup-error', result.error.message);
+        return;
+      }
+
+      showSuccess('signup');
+    }
+
+    /* ── Show success + redirect ───────────────────────── */
+    function showSuccess(type) {
+      var panel = document.getElementById('panel-' + type);
+      ['form', '.auth-form-heading', '.auth-form-sub',
+       '.btn-google', '.auth-divider', '.auth-switch'].forEach(function (sel) {
+        var el = panel.querySelector(sel);
+        if (el) el.style.display = 'none';
+      });
+
+      var msg = document.getElementById('success-message');
+      if (course && COURSES[course]) {
+        msg.textContent = 'Taking you to complete your ' + COURSES[course].name + ' enrollment...';
+      } else {
+        msg.textContent = type === 'signup'
+          ? 'Account created! Taking you to your dashboard...'
+          : 'Welcome back! Taking you to your dashboard...';
+      }
+
+      document.getElementById('auth-success').classList.add('visible');
+      document.getElementById('auth-success').style.display = 'flex';
+
+      setTimeout(redirectAfterAuth, 1500);
+    }
+
+    function redirectAfterAuth() {
+      if (course) {
+        window.location.href = 'payment.html?course=' + course;
+      } else {
+        window.location.href = 'dashboard.html';
+      }
+    }
+
+    /* ── Catch session created by signup or login ── */
+db.auth.onAuthStateChange(function (event, session) {
+  if (event === 'SIGNED_IN' && session) {
+    redirectAfterAuth();
+  }
+});
+
+if (result.error) {
+  btn.textContent = 'Create account →';
+  btn.disabled = false;
+  var msg = result.error.message === 'User already registered'
+    ? 'An account with this email already exists. Try logging in instead.'
+    : result.error.message;
+  showFormError('signup-error', msg);
+  return;
+}
+  </script>
+</body>
+</html>

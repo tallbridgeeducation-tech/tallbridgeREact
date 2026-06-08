@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Dashboard — Tall Bridge Institute</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { overflow-x: hidden; }
+    body { background: #fafafa; font-family: 'DM Sans', sans-serif; }
+
+    /* ── Loading screen ─────────────────────────────── */
+    #dash-loading {
+      position: fixed; inset: 0;
+      background: #fff;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 1rem; z-index: 999;
+    }
+    #dash-loading.hidden { display: none; }
+
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid #ede4f8;
+      border-top-color: #721CB8;
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #dash-loading p {
+      font-family: 'DM Sans', sans-serif;
+      font-size: .88rem; color: #995BD5;
+    }
+
+    /* ── Page hidden until loaded ───────────────────── */
+    #dash-page { display: none; }
+    #dash-page.visible { display: block; }
+
+    /* ── Nav ────────────────────────────────────────── */
+    .dash-nav-right {
+      display: flex; align-items: center; gap: .75rem;
+    }
+    .dash-nav-name {
+      font-size: .85rem; color: #421869; font-weight: 500;
+    }
+    .btn-logout {
+      background: transparent; border: 1px solid #ddd0f5;
+      color: #721CB8; padding: .5rem 1rem; border-radius: 4px;
+      font-family: 'DM Sans', sans-serif; font-size: .8rem;
+      cursor: pointer; transition: all .2s;
+    }
+    .btn-logout:hover { background: #721CB8; color: #fff; border-color: #721CB8; }
+
+    /* ── Hero ───────────────────────────────────────── */
+    .dash-hero {
+      background: #421869; padding: 2.5rem 4rem;
+      position: relative; overflow: hidden;
+    }
+    .dash-hero-wave {
+      position: absolute; right: 0; top: 0;
+      height: 100%; width: 300px;
+      opacity: .18; pointer-events: none;
+    }
+    .dash-hero-inner { position: relative; z-index: 2; }
+    .dash-eyebrow {
+      font-size: .7rem; font-weight: 500; letter-spacing: .1em;
+      text-transform: uppercase; color: #96D74C; margin-bottom: .4rem;
+    }
+    .dash-hero h1 {
+      font-family: 'Lora', serif; font-size: 1.9rem;
+      font-weight: 700; color: #f0e8ff; line-height: 1.2;
+    }
+    .dash-hero h1 em { font-style: italic; color: #96D74C; }
+    .dash-hero-sub {
+      font-size: .9rem; color: #9a7ab8;
+      margin-top: .4rem; font-weight: 300;
+    }
+
+    /* ── Main layout ────────────────────────────────── */
+    .dash-main {
+      padding: 2.5rem 4rem;
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 2.5rem;
+      align-items: start;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .dash-section-label {
+      font-size: .7rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: #721CB8; margin-bottom: 1rem;
+    }
+
+    /* ── Course card ────────────────────────────────── */
+    .dash-course-card {
+      background: #fff;
+      border: 1.5px solid #ddd0f5;
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+    .dash-course-top {
+      background: #421869;
+      padding: 1.5rem 2rem;
+      position: relative; overflow: hidden;
+    }
+    .dash-course-top-wave {
+      position: absolute; right: 0; top: 0;
+      height: 100%; width: 180px;
+      opacity: .15; pointer-events: none;
+    }
+    .dash-course-top-tag {
+      display: inline-block;
+      background: #96D74C; color: #421869;
+      font-size: .65rem; font-weight: 700;
+      padding: .2rem .7rem; border-radius: 20px;
+      letter-spacing: .06em; text-transform: uppercase;
+      margin-bottom: .6rem; position: relative; z-index: 2;
+    }
+    .dash-course-top h2 {
+      font-family: 'Lora', serif; font-size: 1.2rem;
+      font-weight: 700; color: #f0e8ff;
+      position: relative; z-index: 2;
+    }
+    .dash-course-top p {
+      font-size: .82rem; color: #9a7ab8;
+      font-weight: 300; margin-top: .25rem;
+      position: relative; z-index: 2;
+    }
+
+    /* ── Modules ────────────────────────────────────── */
+    .dash-modules { padding: 1.5rem 2rem; }
+
+    .module-item {
+      display: flex; align-items: center;
+      gap: 1rem; padding: .9rem 0;
+      border-bottom: 1px solid #f3eeff;
+      position: relative;
+    }
+    .module-item:last-child { border-bottom: none; }
+
+    .module-num {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: #421869; color: #96D74C;
+      font-size: .75rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .module-num.free { background: #96D74C; color: #421869; }
+
+    .module-info { flex: 1; }
+    .module-title {
+      font-size: .9rem; font-weight: 500; color: #421869;
+    }
+    .module-title.locked { color: #bbb; }
+    .module-sub {
+      font-size: .75rem; color: #995BD5;
+      font-weight: 300; margin-top: .1rem;
+    }
+    .module-sub.locked { color: #ddd; }
+
+    .module-status {
+      font-size: .72rem; font-weight: 500;
+      padding: .2rem .6rem; border-radius: 20px;
+      flex-shrink: 0;
+    }
+    .module-status.free-tag {
+      background: #f0fbe0; color: #509724;
+    }
+    .module-status.locked-tag {
+      background: #f9f9f9; color: #ccc;
+      border: 1px solid #eee;
+    }
+
+    /* ── Payment CTA banner ─────────────────────────── */
+    .dash-pay-banner {
+      background: linear-gradient(135deg, #421869 0%, #721CB8 100%);
+      border-radius: 12px;
+      padding: 1.5rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+    .dash-pay-banner-text h3 {
+      font-family: 'Lora', serif;
+      font-size: 1.1rem; font-weight: 700;
+      color: #f0e8ff; margin-bottom: .25rem;
+    }
+    .dash-pay-banner-text p {
+      font-size: .82rem; color: #9a7ab8; font-weight: 300;
+    }
+    .btn-pay-now {
+      background: #96D74C; color: #421869;
+      border: none; padding: .85rem 1.75rem;
+      border-radius: 8px; font-family: 'DM Sans', sans-serif;
+      font-size: .9rem; font-weight: 700;
+      cursor: pointer; white-space: nowrap;
+      transition: opacity .2s; flex-shrink: 0;
+    }
+    .btn-pay-now:hover { opacity: .88; }
+
+    /* ── Paid success banner ────────────────────────── */
+    .dash-paid-banner {
+      background: #f0fbe0;
+      border: 1.5px solid #c5e896;
+      border-radius: 12px;
+      padding: 1.25rem 1.75rem;
+      display: flex; align-items: center; gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .dash-paid-banner-icon {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: #96D74C;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .dash-paid-banner h4 {
+      font-family: 'Lora', serif; font-size: 1rem;
+      font-weight: 700; color: #421869; margin-bottom: .15rem;
+    }
+    .dash-paid-banner p {
+      font-size: .8rem; color: #509724; font-weight: 300;
+    }
+
+    /* ── Account sidebar ────────────────────────────── */
+    .dash-sidebar { display: flex; flex-direction: column; gap: 1.25rem; }
+
+    .dash-account-card {
+      background: #fff;
+      border: 1.5px solid #ddd0f5;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .dash-account-top {
+      background: #421869; padding: 1.5rem;
+      display: flex; flex-direction: column;
+      align-items: center; text-align: center; gap: .5rem;
+    }
+    .dash-avatar {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: #96D74C;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Lora', serif; font-size: 1.3rem;
+      font-weight: 700; color: #421869;
+    }
+    .dash-account-name {
+      font-family: 'Lora', serif; font-size: 1rem;
+      font-weight: 700; color: #f0e8ff;
+    }
+    .dash-account-email {
+      font-size: .75rem; color: #9a7ab8; font-weight: 300;
+    }
+    .dash-account-body { padding: 1.25rem 1.5rem; }
+    .dash-account-row {
+      display: flex; justify-content: space-between;
+      align-items: center; padding: .6rem 0;
+      border-bottom: 1px solid #f3eeff;
+      font-size: .82rem;
+    }
+    .dash-account-row:last-child { border-bottom: none; }
+    .dash-account-row-label { color: #995BD5; font-weight: 300; }
+    .dash-account-row-val { color: #421869; font-weight: 500; }
+
+    .badge-paid {
+      background: #f0fbe0; color: #509724;
+      font-size: .7rem; padding: .2rem .65rem;
+      border-radius: 20px; font-weight: 600;
+    }
+    .badge-unpaid {
+      background: #fff5f5; color: #e53e3e;
+      font-size: .7rem; padding: .2rem .65rem;
+      border-radius: 20px; font-weight: 600;
+    }
+
+    /* ── Help card ──────────────────────────────────── */
+    .dash-help-card {
+      background: #fff;
+      border: 1.5px solid #ddd0f5;
+      border-radius: 14px;
+      padding: 1.25rem 1.5rem;
+    }
+    .dash-help-card h4 {
+      font-family: 'Lora', serif; font-size: .95rem;
+      font-weight: 700; color: #421869; margin-bottom: .4rem;
+    }
+    .dash-help-card p {
+      font-size: .78rem; color: #995BD5;
+      font-weight: 300; line-height: 1.6; margin-bottom: .75rem;
+    }
+    .dash-help-card a {
+      font-size: .8rem; color: #721CB8;
+      text-decoration: none; font-weight: 500;
+    }
+    .dash-help-card a:hover { text-decoration: underline; }
+
+    /* ── Responsive ─────────────────────────────────── */
+    @media (max-width: 900px) {
+      .dash-hero { padding: 2rem 1.25rem; }
+      .dash-main {
+        grid-template-columns: 1fr;
+        padding: 1.5rem 1.25rem;
+      }
+      .dash-sidebar { order: -1; }
+    }
+    @media (max-width: 480px) {
+      .dash-hero h1 { font-size: 1.5rem; }
+      .dash-modules { padding: 1rem 1.25rem; }
+      .dash-course-top { padding: 1.25rem; }
+      .dash-pay-banner { flex-direction: column; align-items: flex-start; }
+      .btn-pay-now { width: 100%; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Loading screen — visible by default, hidden after auth resolves -->
+  <div id="dash-loading">
+    <div class="spinner"></div>
+    <p>Loading your dashboard...</p>
+  </div>
+
+  <!-- Dashboard — hidden until auth confirms -->
+  <div id="dash-page">
+
+    <nav>
+      <div class="nav-logo" onclick="window.location.href='index.html'" style="cursor:pointer;">
+        <img src="logo.png" alt="Tall Bridge Institute">
+        <div>
+          <div class="nav-logo-text">Tall Bridge<span>.</span></div>
+          <span class="nav-logo-sub">Institute</span>
+        </div>
+      </div>
+      <div class="dash-nav-right">
+        <span class="dash-nav-name" id="nav-user-name"></span>
+        <button class="btn-logout" id="btn-logout">Log out</button>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <div class="dash-hero">
+      <svg class="dash-hero-wave" viewBox="0 0 300 400" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <path d="M150 0 C100 60,40 100,60 180 C80 260,180 290,160 360 C140 430,60 450,80 480 L300 480 L300 0 Z" fill="#96D74C"/>
+        <path d="M168 0 C118 60,58 100,78 180 C98 260,198 290,178 360 C158 430,78 450,98 480 L300 480 L300 0 Z" fill="none" stroke="#721CB8" stroke-width="1.5" opacity="0.6"/>
+      </svg>
+      <div class="dash-hero-inner">
+        <div class="dash-eyebrow">My Dashboard</div>
+        <h1>Welcome back, <em id="dash-firstname">Learner</em>.</h1>
+        <p class="dash-hero-sub" id="dash-sub">Continue where you left off.</p>
+      </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="dash-main">
+
+      <!-- Left: Course + Modules -->
+      <div>
+        <!-- Payment CTA or success banner -->
+        <div id="dash-pay-banner" class="dash-pay-banner" style="display:none;">
+          <div class="dash-pay-banner-text">
+            <h3>Unlock your full course</h3>
+            <p>Modules 2–5 are locked. Pay once to get permanent access.</p>
+          </div>
+          <button class="btn-pay-now" id="btn-pay-now">Pay $70 to Unlock →</button>
+        </div>
+
+        <div id="dash-paid-banner" class="dash-paid-banner" style="display:none;">
+          <div class="dash-paid-banner-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M4 10l4 4 8-8" stroke="#421869" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div>
+            <h4>Full access unlocked</h4>
+            <p>All modules are available. Keep learning!</p>
+          </div>
+        </div>
+
+        <!-- Course card -->
+        <div class="dash-section-label">My Course</div>
+        <div class="dash-course-card">
+          <div class="dash-course-top">
+            <svg class="dash-course-top-wave" viewBox="0 0 180 200" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+              <path d="M90 0 C50 40,10 70,30 120 C50 170,140 180,120 200 L180 200 L180 0 Z" fill="#96D74C"/>
+            </svg>
+            <div class="dash-course-top-tag">Enrolled</div>
+            <h2>ESL Online Teaching</h2>
+            <p>From speaking English to earning from it.</p>
+          </div>
+
+          <div class="dash-modules" id="dash-modules">
+            <!-- Populated by JS based on payment status -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Account sidebar -->
+      <div class="dash-sidebar">
+
+        <div class="dash-account-card">
+          <div class="dash-account-top">
+            <div class="dash-avatar" id="dash-avatar">?</div>
+            <div class="dash-account-name" id="dash-full-name">—</div>
+            <div class="dash-account-email" id="dash-email">—</div>
+          </div>
+          <div class="dash-account-body">
+            <div class="dash-account-row">
+              <span class="dash-account-row-label">Member since</span>
+              <span class="dash-account-row-val" id="dash-joined">—</span>
+            </div>
+            <div class="dash-account-row">
+              <span class="dash-account-row-label">Course</span>
+              <span class="dash-account-row-val">ESL Online Teaching</span>
+            </div>
+            <div class="dash-account-row">
+              <span class="dash-account-row-label">Payment</span>
+              <span id="dash-payment-badge"><span class="badge-unpaid">Unpaid</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-help-card">
+          <h4>Need help?</h4>
+          <p>Reach out and we'll get back to you as soon as possible.</p>
+          <a href="mailto:hello@tallbridgeinstitute.com">hello@tallbridgeinstitute.com</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ── Config ─────────────────────────────────────── */
+    const SUPA_URL = 'https://xhxchpsfgxrzpyndxdyv.supabase.co';
+    const SUPA_KEY = 'sb_publishable_3zfwFx2JSKvI2EQSl6I_uA_q3yJPgG8';
+    const { createClient } = supabase;
+    const db = createClient(SUPA_URL, SUPA_KEY);
+
+    const MODULES = [
+      { num: 1, title: 'Your teaching identity & confidence',        sub: 'The Nigerian teacher narrative', free: true  },
+      { num: 2, title: 'TEFL certification overview',                sub: 'What it covers and how to complete it',      free: false },
+      { num: 3, title: 'Pedagogy, classroom management & delivery',  sub: 'Online teaching techniques',                 free: false },
+      { num: 4, title: 'Platform mastery',                           sub: 'ClassIn, Zoom & VoovMeeting',               free: false },
+      { num: 5, title: 'Your CV, intro video & getting hired',       sub: 'Global employer application',               free: false },
+    ];
+
+    /* ── THE FIX: use onAuthStateChange instead of getSession()
+       This catches BOTH normal logins AND email confirmation redirects,
+       because Supabase exchanges the URL hash token asynchronously.     ── */
+    db.auth.onAuthStateChange(async function (event, session) {
+
+      // Not logged in at all — go to auth
+      if (!session) {
+        window.location.href = 'auth.html?mode=login';
+        return;
+      }
+
+      // We have a valid session — boot the dashboard
+      await bootDashboard(session);
+    });
+
+    async function bootDashboard(session) {
+      const user = session.user;
+
+      /* ── User info ──────────────────────────────── */
+      const firstName = user.user_metadata?.first_name
+                     || user.email.split('@')[0];
+      const fullName  = user.user_metadata?.full_name
+                     || firstName;
+      const initials  = firstName.charAt(0).toUpperCase()
+                     + (user.user_metadata?.last_name?.charAt(0).toUpperCase() || '');
+      const joined    = new Date(user.created_at).toLocaleDateString('en-GB', {
+                          day: 'numeric', month: 'short', year: 'numeric'
+                        });
+
+      document.getElementById('nav-user-name').textContent  = fullName;
+      document.getElementById('dash-firstname').textContent = firstName;
+      document.getElementById('dash-full-name').textContent = fullName;
+      document.getElementById('dash-email').textContent     = user.email;
+      document.getElementById('dash-avatar').textContent    = initials;
+      document.getElementById('dash-joined').textContent    = joined;
+
+      /* ── Check payments table ───────────────────── */
+      let hasPaid = false;
+      try {
+        const { data: payment } = await db
+          .from('payments')
+          .select('id')
+          .eq('user_id', user.id)
+          .eq('course', 'esl')
+          .maybeSingle();
+
+        hasPaid = !!payment;
+      } catch (e) {
+        // Table may not exist yet — treat as unpaid
+        hasPaid = false;
+      }
+
+      /* ── Render UI based on payment status ──────── */
+      renderModules(hasPaid);
+      renderPaymentStatus(hasPaid, user.id);
+
+      /* ── Show dashboard, hide loader ────────────── */
+      document.getElementById('dash-loading').classList.add('hidden');
+      document.getElementById('dash-page').style.display = 'block';
+    }
+
+    function renderModules(hasPaid) {
+      const container = document.getElementById('dash-modules');
+      container.innerHTML = MODULES.map(function (m) {
+        const unlocked = hasPaid || m.free;
+        return `
+          <div class="module-item">
+            <div class="module-num ${m.free ? 'free' : ''}">${m.num}</div>
+            <div class="module-info">
+              <div class="module-title ${unlocked ? '' : 'locked'}">${m.title}</div>
+              <div class="module-sub  ${unlocked ? '' : 'locked'}">${m.sub}</div>
+            </div>
+            ${m.free
+              ? '<span class="module-status free-tag">Free preview</span>'
+              : unlocked
+                ? '<span class="module-status free-tag">Unlocked</span>'
+                : '<span class="module-status locked-tag">🔒 Locked</span>'
+            }
+          </div>`;
+      }).join('');
+    }
+
+    function renderPaymentStatus(hasPaid, userId) {
+      if (hasPaid) {
+        document.getElementById('dash-pay-banner').style.display  = 'none';
+        document.getElementById('dash-paid-banner').style.display = 'flex';
+        document.getElementById('dash-payment-badge').innerHTML   = '<span class="badge-paid">Paid ✓</span>';
+        document.getElementById('dash-sub').textContent           = 'All modules unlocked. Keep going!';
+      } else {
+        document.getElementById('dash-pay-banner').style.display  = 'flex';
+        document.getElementById('dash-paid-banner').style.display = 'none';
+        document.getElementById('dash-payment-badge').innerHTML   = '<span class="badge-unpaid">Unpaid</span>';
+        document.getElementById('dash-sub').textContent           = 'Complete your payment to unlock all modules.';
+      }
+
+      document.getElementById('btn-pay-now').addEventListener('click', function () {
+        window.location.href = 'payment.html?course=esl';
+      });
+    }
+
+    /* ── Logout ─────────────────────────────────────── */
+    document.getElementById('btn-logout').addEventListener('click', async function () {
+      await db.auth.signOut();
+      window.location.href = 'index.html';
+    });
+  </script>
+</body>
+</html>
