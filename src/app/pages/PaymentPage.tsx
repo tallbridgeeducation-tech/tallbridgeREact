@@ -179,7 +179,7 @@ export default function PaymentPage() {
     }
 
     setPaySuccess(true);
-    setTimeout(() => { window.location.href = "https://app.tallbridgeinstitute.com/dashboard"; }, 2000);
+    setTimeout(() => { window.location.href = "https://app.tallbridgeinstitute.com/"; }, 2000);
   };
 
   if (loading) {
