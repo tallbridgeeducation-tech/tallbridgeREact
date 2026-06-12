@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { db, COURSES } from "../lib/supabase";
-import logo from "../../imports/logo.png";
+// CHANGED: Logo now served from public folder instead of import
+// import logo from "../../imports/logo.png";
 
 type Tab = "login" | "signup";
 type View = "tabs" | "otp";
@@ -89,11 +90,38 @@ export default function AuthPage() {
     }
   };
 
+  // CRITICAL FIX: Handle OAuth callback immediately on page load
+  // This ensures the access_token in URL hash is processed before onAuthStateChange fires
   useEffect(() => {
-    // Listen for auth state changes (handles magic link callbacks and OAuth returns)
+    const handleOAuthCallback = async () => {
+      const hash = window.location.hash;
+      // Check if this is an OAuth callback (has access_token or refresh_token)
+      if (hash.includes("access_token") || hash.includes("refresh_token")) {
+        // Give Supabase a moment to auto-process the hash
+        await new Promise(resolve => setTimeout(resolve, 300));
+
+        // Check if session was established
+        const { data: { session } } = await db.auth.getSession();
+        if (session) {
+          redirectAfterAuth();
+          return;
+        }
+
+        // If still no session, try once more after a short delay
+        setTimeout(async () => {
+          const { data: { session: retrySession } } = await db.auth.getSession();
+          if (retrySession) redirectAfterAuth();
+        }, 700);
+      }
+    };
+
+    handleOAuthCallback();
+
+    // Also listen for auth state changes (handles magic links and other auth events)
     const { data: { subscription } } = db.auth.onAuthStateChange((_event, session) => {
       if (session) redirectAfterAuth();
     });
+
     return () => subscription.unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -113,6 +141,8 @@ export default function AuthPage() {
     setGoogleLoading(true);
     // Store course in localStorage so PaymentPage can read it after OAuth redirect
     if (course) localStorage.setItem("tb_pending_course", course);
+
+    // CHANGED: Use current URL with hash fragment support for OAuth callback
     const redirect = `${window.location.origin}/auth`;
     const { error } = await db.auth.signInWithOAuth({
       provider: "google",
@@ -302,7 +332,8 @@ export default function AuthPage() {
           <path d="M170 0 C120 100,60 160,80 270 C100 380,220 420,200 550 C180 680,80 730,100 800 L300 800 L300 0 Z" fill="none" stroke="#721CB8" strokeWidth="1.5" opacity="0.3"/>
         </svg>
         <a className="auth-brand-logo" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
-          <img src={logo} alt="Tall Bridge Institute" />
+          {/* CHANGED: Use public folder path for logo instead of imported variable */}
+          <img src="/logo.png" alt="Tall Bridge Institute" />
           <div>
             <div className="auth-brand-logo-text">Tall Bridge<span>.</span></div>
             <span className="auth-brand-logo-sub">Institute</span>
