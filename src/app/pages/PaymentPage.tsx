@@ -23,8 +23,8 @@ declare global {
 const PAYSTACK_KEY = import.meta.env.VITE_PAYSTACK_KEY || "pk_test_147a77e6a155cd466527d9a3c6e20e4de7853df7";
 
 const PRICES = {
-  early: { label: "Early Bird", display: "$70", amount: 7000 },
-  regular: { label: "Regular Registration", display: "$100", amount: 10000 },
+  early: { label: "Early Bird", display: "$70 (~₦105,000)", amount: 10500000 },
+  regular: { label: "Regular Registration", display: "$100 (~₦150,000)", amount: 15000000 },
 };
 
 type Tier = "early" | "regular";
@@ -262,7 +262,7 @@ export default function PaymentPage() {
                         <div className="pay-option-desc">Same course, same certificate — lower price</div>
                       </div>
                     </div>
-                    <div className="pay-option-price">$70</div>
+                    <div className="pay-option-price">$70 (~₦105k)</div>
                   </div>
                   <div
                     className={`pay-option${selected === "regular" ? " selected" : ""}`}
@@ -275,7 +275,7 @@ export default function PaymentPage() {
                         <div className="pay-option-desc">Full access, all support included</div>
                       </div>
                     </div>
-                    <div className="pay-option-price">$100</div>
+                    <div className="pay-option-price">$100 (~₦150k)</div>
                   </div>
                 </div>
 
