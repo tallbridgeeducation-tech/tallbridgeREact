@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { db, COURSES } from "../lib/supabase";
-// CHANGED: Logo now served from public folder instead of import
-// import logo from "../../imports/logo.png";
 
 type Tab = "login" | "signup";
 type View = "tabs" | "otp";
@@ -73,6 +71,9 @@ export default function AuthPage() {
   const [resendLoading, setResendLoading] = useState(false);
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
 
+  // Guard to prevent double redirects from onAuthStateChange
+  const hasRedirected = useRef(false);
+
   const courseData = course && COURSES[course] ? COURSES[course] : null;
 
   const switchTab = (t: Tab) => {
@@ -90,43 +91,59 @@ export default function AuthPage() {
     }
   };
 
-  // CRITICAL FIX: Handle OAuth callback immediately on page load
-  // This ensures the access_token in URL hash is processed before onAuthStateChange fires
   useEffect(() => {
     const handleOAuthCallback = async () => {
       const hash = window.location.hash;
-      // Check if this is an OAuth callback (has access_token or refresh_token)
       if (hash.includes("access_token") || hash.includes("refresh_token")) {
-        // Give Supabase a moment to auto-process the hash
         await new Promise(resolve => setTimeout(resolve, 300));
-
-        // Check if session was established
         const { data: { session } } = await db.auth.getSession();
+
         if (session) {
-          redirectAfterAuth();
+          const pendingCourse = localStorage.getItem("tb_pending_course");
+          if (pendingCourse) {
+            localStorage.removeItem("tb_pending_course");
+            navigate(`/payment?course=${pendingCourse}`);
+          } else {
+            redirectAfterAuth();
+          }
           return;
         }
 
-        // If still no session, try once more after a short delay
         setTimeout(async () => {
           const { data: { session: retrySession } } = await db.auth.getSession();
-          if (retrySession) redirectAfterAuth();
+          if (retrySession) {
+            const pendingCourse = localStorage.getItem("tb_pending_course");
+            if (pendingCourse) {
+              localStorage.removeItem("tb_pending_course");
+              navigate(`/payment?course=${pendingCourse}`);
+            } else {
+              redirectAfterAuth();
+            }
+          }
         }, 700);
       }
     };
 
     handleOAuthCallback();
 
-    // Also listen for auth state changes (handles magic links and other auth events)
-    const { data: { subscription } } = db.auth.onAuthStateChange((_event, session) => {
-      if (session) redirectAfterAuth();
+    const { data: { subscription } } = db.auth.onAuthStateChange((event, session) => {
+      if (hasRedirected.current) return;
+      if (event === "SIGNED_IN" && session) {
+        hasRedirected.current = true;
+        const pendingCourse = localStorage.getItem("tb_pending_course");
+        if (pendingCourse) {
+          localStorage.removeItem("tb_pending_course");
+          navigate(`/payment?course=${pendingCourse}`);
+        } else {
+          redirectAfterAuth();
+        }
+      }
     });
 
     return () => subscription.unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Resend cooldown countdown
   useEffect(() => {
     if (resendCooldown <= 0) return;
     const t = setTimeout(() => setResendCooldown(c => c - 1), 1000);
@@ -141,18 +158,12 @@ export default function AuthPage() {
     setGoogleLoading(true);
     if (course) localStorage.setItem("tb_pending_course", course);
 
-    // Use window.location.origin so it works on any domain
-
-    const redirect = `${window.location.origin}/auth`;
-    // Store course in localStorage so PaymentPage can read it after OAuth redirect
-    if (course) localStorage.setItem("tb_pending_course", course);
-
-    // CHANGED: Use current URL with hash fragment support for OAuth callback
-    const redirect = `${window.location.origin}/auth`;
+    const redirectUrl = `${window.location.origin}/auth`;
     const { error } = await db.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: redirect },
+      options: { redirectTo: redirectUrl },
     });
+
     setGoogleLoading(false);
     if (error) {
       setGoogleErr(
@@ -228,7 +239,6 @@ export default function AuthPage() {
       return;
     }
 
-    // If Supabase auto-confirmed (session returned immediately), skip OTP
     if (data.session) {
       const msg = course && courseData
         ? `Account created! Taking you to complete your ${courseData.name} enrollment...`
@@ -239,8 +249,7 @@ export default function AuthPage() {
       return;
     }
 
-    // Move to OTP verification screen
-    setOtpDigits(["", "", "", "", "", ""]);
+    setOtpDigits(Array(6).fill(""));
     setOtpErr("");
     setResendCooldown(60);
     setView("otp");
@@ -270,8 +279,8 @@ export default function AuthPage() {
     e.preventDefault();
     const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
     if (!pasted) return;
-    const next = [...otpDigits];
-    pasted.split("").forEach((ch, i) => { next[i] = ch; });
+    const next = Array(6).fill("");
+    pasted.split("").forEach((ch, i) => { if (i < 6) next[i] = ch; });
     setOtpDigits(next);
     const focusIndex = Math.min(pasted.length, 5);
     otpRefs.current[focusIndex]?.focus();
@@ -293,7 +302,6 @@ export default function AuthPage() {
     setOtpLoading(false);
 
     if (error) {
-      // Graceful fallback: if user is somehow already confirmed, just proceed
       const { data: { session } } = await db.auth.getSession();
       if (session) {
         redirectAfterAuth();
@@ -330,14 +338,12 @@ export default function AuthPage() {
 
   return (
     <div className="auth-page">
-      {/* Left brand panel */}
       <div className="auth-brand">
         <svg className="auth-brand-wave" viewBox="0 0 300 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
           <path d="M150 0 C100 100,40 160,60 270 C80 380,200 420,180 550 C160 680,60 730,80 800 L300 800 L300 0 Z" fill="#96D74C" opacity="0.15"/>
           <path d="M170 0 C120 100,60 160,80 270 C100 380,220 420,200 550 C180 680,80 730,100 800 L300 800 L300 0 Z" fill="none" stroke="#721CB8" strokeWidth="1.5" opacity="0.3"/>
         </svg>
         <a className="auth-brand-logo" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
-          {/* CHANGED: Use public folder path for logo instead of imported variable */}
           <img src="/logo.png" alt="Tall Bridge Institute" />
           <div>
             <div className="auth-brand-logo-text">Tall Bridge<span>.</span></div>
@@ -377,11 +383,9 @@ export default function AuthPage() {
         <div className="auth-brand-footer"><p>Know, Do, Be, Have... More.</p></div>
       </div>
 
-      {/* Right form panel */}
       <div className="auth-form-panel">
         <div className="auth-form-inner">
 
-          {/* Mobile course strip */}
           {courseData && view !== "otp" && (
             <div className="auth-mobile-course visible">
               <div className="auth-mobile-course-label">Enrolling in</div>
@@ -392,7 +396,6 @@ export default function AuthPage() {
             </div>
           )}
 
-          {/* SUCCESS */}
           {showSuccess && (
             <div className="auth-success visible">
               <div className="auth-success-icon">
@@ -405,7 +408,6 @@ export default function AuthPage() {
             </div>
           )}
 
-          {/* OTP VERIFICATION PANEL */}
           {!showSuccess && view === "otp" && (
             <div className="otp-panel">
               <div className="otp-panel-icon">
@@ -466,23 +468,20 @@ export default function AuthPage() {
 
               <button
                 className="otp-back-btn"
-                onClick={() => { setView("tabs"); setOtpDigits(["", "", "", "", "", ""]); setOtpErr(""); }}
+                onClick={() => { setView("tabs"); setOtpDigits(Array(6).fill("")); setOtpErr(""); }}
               >
                 ← Back to sign up
               </button>
             </div>
           )}
 
-          {/* TABS + LOGIN + SIGNUP */}
           {!showSuccess && view === "tabs" && (
             <>
-              {/* Tabs */}
               <div className="auth-tabs" role="tablist">
                 <button className={`auth-tab${tab === "login" ? " active" : ""}`} onClick={() => switchTab("login")}>Log in</button>
                 <button className={`auth-tab${tab === "signup" ? " active" : ""}`} onClick={() => switchTab("signup")}>Sign up</button>
               </div>
 
-              {/* LOGIN PANEL */}
               <div className={`auth-panel${tab === "login" ? " active" : ""}`}>
                 <h2 className="auth-form-heading">Welcome <em>back.</em></h2>
                 <p className="auth-form-sub">Log in to continue your learning journey.</p>
@@ -531,7 +530,6 @@ export default function AuthPage() {
                 <p className="auth-switch">{"Don't have an account?"} <a onClick={() => switchTab("signup")}>Sign up</a></p>
               </div>
 
-              {/* SIGNUP PANEL */}
               <div className={`auth-panel${tab === "signup" ? " active" : ""}`}>
                 <h2 className="auth-form-heading">Create your <em>account.</em></h2>
                 <p className="auth-form-sub">One account. Every course {"you'll"} ever need.</p>
