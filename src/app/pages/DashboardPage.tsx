@@ -107,7 +107,7 @@ export default function DashboardPage() {
           <div className="dash-eyebrow">My Dashboard</div>
           <h1>Welcome back, <em>{user?.firstName}</em>.</h1>
           <p className="dash-hero-sub">
-            {hasPaid ? "All modules locked. Keep going!" : "Complete your payment to unlock all modules."}
+            {hasPaid ? "All modules unlocked. Keep going!" : "Complete your payment to unlock all modules."}
           </p>
         </div>
       </div>
@@ -115,7 +115,7 @@ export default function DashboardPage() {
       {/* Main */}
       <div className="dash-main">
         <div>
-          {/* Payment banner */}
+          {/* Payment banner — ONLY shown when unpaid */}
           {!hasPaid && (
             <div className="dash-pay-banner">
               <div className="dash-pay-banner-text">
@@ -178,15 +178,7 @@ export default function DashboardPage() {
                 );
               })}
             </div>
-            {hasPaid && (
-              <button
-                className="btn-auth-submit lime"
-                style={{ margin: "1.5rem 1.5rem 1.5rem", width: "calc(100% - 3rem)" }}
-                onClick={() => window.location.href = "https://app.tallbridgeinstitute.com"}
-              >
-                Continue learning →
-              </button>
-            )}
+            {/* NO BUTTON HERE — removed entirely */}
           </div>
         </div>
 
