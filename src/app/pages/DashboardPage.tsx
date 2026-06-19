@@ -1,14 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { db } from "../lib/supabase";
-import logo from "../../imports/logo.png";
 
 const MODULES = [
-  { num: 1, title: "Your teaching identity & confidence", sub: "The Nigerian teacher narrative", free: true },
-  { num: 2, title: "TEFL certification overview", sub: "What it covers and how to complete it", free: false },
-  { num: 3, title: "Pedagogy, classroom management & delivery", sub: "Online teaching techniques", free: false },
-  { num: 4, title: "Platform mastery", sub: "ClassIn, Zoom & VoovMeeting", free: false },
-  { num: 5, title: "Your CV, intro video & getting hired", sub: "Global employer application", free: false },
+  { num: 1, title: "Your teaching identity & confidence", sub: "The Nigerian teacher narrative" },
+  { num: 2, title: "TEFL certification overview", sub: "What it covers and how to complete it" },
+  { num: 3, title: "Pedagogy, classroom management & delivery", sub: "Online teaching techniques" },
+  { num: 4, title: "Platform mastery", sub: "ClassIn, Zoom & VoovMeeting" },
+  { num: 5, title: "Your CV, intro video & getting hired", sub: "Global employer application" },
 ];
 
 interface UserInfo {
@@ -86,7 +85,7 @@ export default function DashboardPage() {
       {/* Nav */}
       <nav>
         <div className="nav-logo" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
-          <img src={logo} alt="Tall Bridge Institute" />
+          <img src="/logo.png" alt="Tall Bridge Institute" />
           <div>
             <div className="nav-logo-text">Tall Bridge<span>.</span></div>
             <span className="nav-logo-sub">Institute</span>
@@ -108,7 +107,7 @@ export default function DashboardPage() {
           <div className="dash-eyebrow">My Dashboard</div>
           <h1>Welcome back, <em>{user?.firstName}</em>.</h1>
           <p className="dash-hero-sub">
-            {hasPaid ? "All modules unlocked. Keep going!" : "Complete your payment to unlock all modules."}
+            {hasPaid ? "All modules locked. Keep going!" : "Complete your payment to unlock all modules."}
           </p>
         </div>
       </div>
@@ -121,7 +120,7 @@ export default function DashboardPage() {
             <div className="dash-pay-banner">
               <div className="dash-pay-banner-text">
                 <h3>Unlock your full course</h3>
-                <p>Modules 2–5 are locked. Pay once to get permanent access.</p>
+                <p>All modules are locked. Pay once to get permanent access.</p>
               </div>
               <button className="btn-pay-now" onClick={() => navigate("/payment?course=esl")}>
                 Pay $70 to Unlock →
@@ -157,7 +156,7 @@ export default function DashboardPage() {
 
             <div className="dash-modules">
               {MODULES.map(m => {
-                const unlocked = hasPaid || m.free;
+                const unlocked = hasPaid;
                 return (
                   <div
                     className={`dash-module-item${unlocked ? " clickable" : ""}`}
@@ -165,14 +164,12 @@ export default function DashboardPage() {
                     onClick={() => unlocked && (window.location.href = "https://app.tallbridgeinstitute.com")}
                     style={unlocked ? { cursor: "pointer" } : {}}
                   >
-                    <div className={`dash-module-num${m.free ? " free" : ""}`}>{m.num}</div>
+                    <div className="dash-module-num">{m.num}</div>
                     <div className="dash-module-info">
                       <div className={`dash-module-title${unlocked ? "" : " locked"}`}>{m.title}</div>
                       <div className={`dash-module-sub${unlocked ? "" : " locked"}`}>{m.sub}</div>
                     </div>
-                    {m.free ? (
-                      <span className="dash-module-status free-tag">Preview →</span>
-                    ) : unlocked ? (
+                    {unlocked ? (
                       <span className="dash-module-status free-tag">Open →</span>
                     ) : (
                       <span className="dash-module-status locked-tag">🔒 Locked</span>
@@ -181,13 +178,15 @@ export default function DashboardPage() {
                 );
               })}
             </div>
-            <button
-              className="btn-auth-submit lime"
-              style={{ margin: "1.5rem 1.5rem 1.5rem", width: "calc(100% - 3rem)" }}
-              onClick={() => window.location.href = "https://app.tallbridgeinstitute.com"}
-            >
-              {hasPaid ? "Continue learning →" : "Start Module 1 (free) →"}
-            </button>
+            {hasPaid && (
+              <button
+                className="btn-auth-submit lime"
+                style={{ margin: "1.5rem 1.5rem 1.5rem", width: "calc(100% - 3rem)" }}
+                onClick={() => window.location.href = "https://app.tallbridgeinstitute.com"}
+              >
+                Continue learning →
+              </button>
+            )}
           </div>
         </div>
 
@@ -223,7 +222,7 @@ export default function DashboardPage() {
           <div className="dash-help-card">
             <h4>Need help?</h4>
             <p>Reach out and {"we'll"} get back to you as soon as possible.</p>
-            <a href="mailto:support@tallbridge.com">support@tallbridge.com</a>
+            <a href="mailto:support@tallbridgeinstitute.com">support@tallbridgeinstitute.com</a>
           </div>
         </div>
       </div>

@@ -45,7 +45,6 @@ export default function PaymentPage() {
   const [payLabel, setPayLabel] = useState("Pay Securely");
 
   useEffect(() => {
-    // If the script is already loaded (e.g. hot reload), mark ready immediately
     if (window.PaystackPop) {
       setPaystackReady(true);
       return;
@@ -139,8 +138,21 @@ export default function PaymentPage() {
 
   const savePayment = async (reference: string, amount: number, tier: string) => {
     setConfirming(true);
+    setPayError("");
 
-    // Idempotency: check if this reference was already saved
+    if (!userId) {
+      console.error("savePayment called with empty userId");
+      setConfirming(false);
+      setPayError("Authentication error: user ID missing. Please log in again.");
+      return;
+    }
+    if (!userEmail) {
+      console.error("savePayment called with empty userEmail");
+      setConfirming(false);
+      setPayError("Authentication error: email missing. Please log in again.");
+      return;
+    }
+
     try {
       const { data: existing } = await db
         .from("payments")
@@ -149,17 +161,16 @@ export default function PaymentPage() {
         .maybeSingle();
 
       if (existing) {
-        // Already saved — just proceed to dashboard
         setConfirming(false);
         setPaySuccess(true);
         setTimeout(() => navigate("/dashboard"), 2000);
         return;
       }
-    } catch {
-      // Table may not exist yet — continue to insert
+    } catch (err) {
+      console.log("Idempotency check error (non-critical):", err);
     }
 
-    const { error } = await db.from("payments").insert({
+    const payload = {
       user_id: userId,
       email: userEmail,
       course,
@@ -167,13 +178,25 @@ export default function PaymentPage() {
       paystack_reference: reference,
       tier,
       paid_at: new Date().toISOString(),
-    });
+    };
+
+    console.log("Inserting payment payload:", payload);
+
+    const { data, error } = await db.from("payments").insert(payload);
+
+    console.log("Supabase insert response:", { data, error });
 
     setConfirming(false);
 
     if (error) {
+      console.error("INSERT FAILED — Full error:", error);
+      console.error("Error code:", error.code);
+      console.error("Error message:", error.message);
+      console.error("Error details:", error.details);
+      console.error("Error hint:", error.hint);
+
       setPayError(
-        `Your payment went through! Reference: ${reference} — but we hit a snag saving your access. Email support@tallbridge.com with this reference and we'll sort it immediately.`
+        `Your payment went through! Reference: ${reference} — but we hit a snag saving your access. Error: ${error.message}. Email support@tallbridgeinstitute.com with this reference and we'll sort it immediately.`
       );
       return;
     }
@@ -248,7 +271,6 @@ export default function PaymentPage() {
               </div>
             ) : (
               <>
-                {/* Pricing options */}
                 <div className="pay-options">
                   <div
                     className={`pay-option${selected === "early" ? " selected" : ""}`}
@@ -279,7 +301,6 @@ export default function PaymentPage() {
                   </div>
                 </div>
 
-                {/* What's included */}
                 <div className="pay-includes">
                   <div className="pay-includes-title">Everything included</div>
                   {[
@@ -297,13 +318,11 @@ export default function PaymentPage() {
 
                 <div className="pay-divider"></div>
 
-                {/* Summary */}
                 <div className="pay-summary">
                   <span className="pay-summary-label">{PRICES[selected].label} — ESL Online Teaching</span>
                   <span className="pay-summary-amount">{PRICES[selected].display}</span>
                 </div>
 
-                {/* Pay button */}
                 <button className="btn-pay" onClick={initiatePayment} disabled={!paystackReady}>
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                     <rect x="1" y="4" width="14" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.4"/>
