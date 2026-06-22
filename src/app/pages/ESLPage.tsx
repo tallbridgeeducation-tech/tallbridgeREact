@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
+<img src="/logo.png" />
 
 const faqs = [
   {

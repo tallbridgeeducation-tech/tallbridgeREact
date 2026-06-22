@@ -123,7 +123,7 @@ export default function DashboardPage() {
                 <p>All modules are locked. Pay once to get permanent access.</p>
               </div>
               <button className="btn-pay-now" onClick={() => navigate("/payment?course=esl")}>
-                Pay $70 to Unlock →
+                Pay $100 to Unlock →
               </button>
             </div>
           )}
@@ -170,7 +170,7 @@ export default function DashboardPage() {
                       <div className={`dash-module-sub${unlocked ? "" : " locked"}`}>{m.sub}</div>
                     </div>
                     {unlocked ? (
-                      <span className="dash-module-status free-tag">Open →</span>
+                      <span className="dash-module-status free-tag">🔒 Locked</span>
                     ) : (
                       <span className="dash-module-status locked-tag">🔒 Locked</span>
                     )}
@@ -178,7 +178,6 @@ export default function DashboardPage() {
                 );
               })}
             </div>
-            {/* NO BUTTON HERE — removed entirely */}
           </div>
         </div>
 

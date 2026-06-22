@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
-
+<img src="/logo.png" alt="Tall Bridge Institute" style={{ height: '40px' }} />
 export default function HomePage() {
   const navigate = useNavigate();
 

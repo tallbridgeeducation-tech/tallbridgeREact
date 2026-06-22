@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { db } from "../lib/supabase";
-import logo from "../../imports/logo.png";
 
 export default function ForgotPasswordPage() {
   const navigate = useNavigate();
@@ -20,9 +19,13 @@ export default function ForgotPasswordPage() {
     }
     setEmailErr("");
     setLoading(true);
+
+    // FIX APPLIED HERE: Hardcoded absolute canonical URL to ensure safe processing 
+    // across different subdomains (like your app. or your www. endpoints)
     await db.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
+      redirectTo: "https://www.tallbridgeinstitute.com/reset-password",
     });
+    
     setLoading(false);
     setSent(true);
   };
@@ -36,7 +39,7 @@ export default function ForgotPasswordPage() {
           <path d="M170 0 C120 100,60 160,80 270 C100 380,220 420,200 550 C180 680,80 730,100 800 L300 800 L300 0 Z" fill="none" stroke="#721CB8" strokeWidth="1.5" opacity="0.3"/>
         </svg>
         <a className="auth-brand-logo" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
-          <img src={logo} alt="Tall Bridge Institute" />
+          <img src="/logo.png" alt="Tall Bridge Institute" />
           <div>
             <div className="auth-brand-logo-text">Tall Bridge<span>.</span></div>
             <span className="auth-brand-logo-sub">Institute</span>
