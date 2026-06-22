@@ -22,12 +22,11 @@ declare global {
 
 const PAYSTACK_KEY = import.meta.env.VITE_PAYSTACK_KEY || "pk_test_147a77e6a155cd466527d9a3c6e20e4de7853df7";
 
-const PRICES = {
-  early: { label: "Early Bird", display: "$70 (~₦105,000)", amount: 10500000 },
-  regular: { label: "Regular Registration", display: "$100 (~₦150,000)", amount: 15000000 },
+const PRICE = {
+  label: "Regular Registration",
+  display: "$100 (~₦150,000)",
+  amount: 15000000,
 };
-
-type Tier = "early" | "regular";
 
 export default function PaymentPage() {
   const navigate = useNavigate();
@@ -39,10 +38,9 @@ export default function PaymentPage() {
   const [confirming, setConfirming] = useState(false);
   const [userEmail, setUserEmail] = useState("");
   const [userId, setUserId] = useState("");
-  const [selected, setSelected] = useState<Tier>("early");
   const [payError, setPayError] = useState("");
   const [paySuccess, setPaySuccess] = useState(false);
-  const [payLabel, setPayLabel] = useState("Pay Securely");
+  const [payLabel, setPayLabel] = useState("Pay $100 (~₦150,000) Securely");
 
   useEffect(() => {
     if (window.PaystackPop) {
@@ -97,12 +95,6 @@ export default function PaymentPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const selectOption = (tier: Tier) => {
-    setSelected(tier);
-    const p = PRICES[tier];
-    setPayLabel(`Pay ${p.display} Securely`);
-  };
-
   const initiatePayment = () => {
     setPayError("");
 
@@ -111,19 +103,18 @@ export default function PaymentPage() {
       return;
     }
 
-    const p = PRICES[selected];
     const ref = `TB-ESL-${Date.now()}`;
 
     try {
       const handler = window.PaystackPop.setup({
         key: PAYSTACK_KEY,
         email: userEmail,
-        amount: p.amount,
+        amount: PRICE.amount,
         currency: "NGN",
         ref,
-        metadata: { user_id: userId, course, tier: selected },
+        metadata: { user_id: userId, course, tier: "regular" },
         callback: (response) => {
-          savePayment(response.reference, p.amount, p.label);
+          savePayment(response.reference, PRICE.amount, PRICE.label);
         },
         onClose: () => {
           setPayError("Payment window closed. Click the button to try again.");
@@ -271,34 +262,10 @@ export default function PaymentPage() {
               </div>
             ) : (
               <>
-                <div className="pay-options">
-                  <div
-                    className={`pay-option${selected === "early" ? " selected" : ""}`}
-                    onClick={() => selectOption("early")}
-                  >
-                    <div className="pay-option-badge">Limited spots</div>
-                    <div className="pay-option-left">
-                      <div className="pay-radio"></div>
-                      <div>
-                        <div className="pay-option-name">Early Bird</div>
-                        <div className="pay-option-desc">Same course, same certificate — lower price</div>
-                      </div>
-                    </div>
-                    <div className="pay-option-price">$70 (~₦105k)</div>
-                  </div>
-                  <div
-                    className={`pay-option${selected === "regular" ? " selected" : ""}`}
-                    onClick={() => selectOption("regular")}
-                  >
-                    <div className="pay-option-left">
-                      <div className="pay-radio"></div>
-                      <div>
-                        <div className="pay-option-name">Regular Registration</div>
-                        <div className="pay-option-desc">Full access, all support included</div>
-                      </div>
-                    </div>
-                    <div className="pay-option-price">$100 (~₦150k)</div>
-                  </div>
+                <div className="pay-price-box">
+                  <div className="pay-price-label">Registration Fee</div>
+                  <div className="pay-price-amount">{PRICE.display}</div>
+                  <div className="pay-price-desc">Full access, all support included</div>
                 </div>
 
                 <div className="pay-includes">
@@ -319,8 +286,8 @@ export default function PaymentPage() {
                 <div className="pay-divider"></div>
 
                 <div className="pay-summary">
-                  <span className="pay-summary-label">{PRICES[selected].label} — ESL Online Teaching</span>
-                  <span className="pay-summary-amount">{PRICES[selected].display}</span>
+                  <span className="pay-summary-label">{PRICE.label} — ESL Online Teaching</span>
+                  <span className="pay-summary-amount">{PRICE.display}</span>
                 </div>
 
                 <button className="btn-pay" onClick={initiatePayment} disabled={!paystackReady}>
