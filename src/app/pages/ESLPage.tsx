@@ -89,10 +89,6 @@ export default function ESLPage() {
               <p>Choose your registration type</p>
             </div>
             <div className="pricing-card-body">
-              <div className="pricing-row early">
-                <span className="pricing-row-label early-col">Early Bird <span className="pr-badge">Limited</span></span>
-                <span className="pricing-row-amt">$70</span>
-              </div>
               <div className="pricing-row regular">
                 <span className="pricing-row-label">Regular Registration</span>
                 <span className="pricing-row-amt">$100</span>
@@ -100,7 +96,6 @@ export default function ESLPage() {
             </div>
             <div className="pricing-card-footer">
               <button className="btn-start-full" onClick={() => go("/auth?mode=signup&course=esl")}>Register Now →</button>
-              <p className="pricing-note">Early bird pricing is available for a limited number of spots. Both options include the full course, employment support, and certificate.</p>
             </div>
           </div>
         </div>
