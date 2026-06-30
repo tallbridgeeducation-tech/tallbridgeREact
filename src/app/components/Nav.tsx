@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router";
-import logo from "../../imports/logo.png";
 
 export default function Nav() {
   const navigate = useNavigate();
@@ -18,7 +17,7 @@ export default function Nav() {
   return (
     <nav>
       <div className="nav-logo" onClick={() => go("/")}>
-        <img src={logo} alt="Tall Bridge Institute" />
+        <img src="/logo.png" alt="Tall Bridge Institute" />
         <div>
           <div className="nav-logo-text">Tall Bridge<span>.</span></div>
           <span className="nav-logo-sub">Institute</span>

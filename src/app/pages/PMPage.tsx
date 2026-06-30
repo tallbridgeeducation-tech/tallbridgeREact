@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
+<img src="/logo.png" />
 
 export default function PMPage() {
   const navigate = useNavigate();

@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router";
 import { db } from "../lib/supabase";
-import logo from "../../imports/logo.png";
-
-/* ── Course content ─────────────────────────────────────────── */
+<img src="/logo.png" />
+/* ── Course content ───────────────────────────────────────── */
 const COURSE = {
   esl: {
     name: "ESL Online Teaching",
@@ -451,7 +450,7 @@ export default function LMSPage() {
             </svg>
           </button>
           <div className="lms-topbar-logo" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
-            <img src={logo} alt="Tall Bridge" />
+            <img src="/logo.png" alt="Tall Bridge" />
             <span>Tall Bridge<span className="lms-dot">.</span></span>
           </div>
           <div className="lms-topbar-course">{course.name}</div>

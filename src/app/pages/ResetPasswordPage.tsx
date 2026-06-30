@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { db } from "../lib/supabase";
-import logo from "../../imports/logo.png";
-
+<img src="/logo.png" />
 function getPasswordStrength(val: string) {
   if (!val) return { width: "0%", bg: "#eee", label: "" };
   let score = 0;
@@ -91,7 +90,7 @@ export default function ResetPasswordPage() {
           <path d="M170 0 C120 100,60 160,80 270 C100 380,220 420,200 550 C180 680,80 730,100 800 L300 800 L300 0 Z" fill="none" stroke="#721CB8" strokeWidth="1.5" opacity="0.3"/>
         </svg>
         <a className="auth-brand-logo" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
-          <img src={logo} alt="Tall Bridge Institute" />
+          <img src="/logo.png" alt="Tall Bridge Institute" />
           <div>
             <div className="auth-brand-logo-text">Tall Bridge<span>.</span></div>
             <span className="auth-brand-logo-sub">Institute</span>

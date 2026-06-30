@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router";
 import "../styles/fonts.css";
 import "./styles/tallbridge.css";
-import { SpeedInsights } from "@vercel/speed-insights/next"
+// FIXED: Swapped out the Next.js version for the standard web injection package
+import { injectSpeedInsights } from "@vercel/speed-insights";
 
 import HomePage from "./pages/HomePage";
 import CoursesPage from "./pages/CoursesPage";
@@ -35,6 +36,9 @@ function PlaceholderPage({ title, body }: { title: string; body: string }) {
 }
 
 export default function App() {
+  // Automatically initializes production metric tracking on mount safely for Vite
+  injectSpeedInsights();
+
   return (
     <BrowserRouter>
       <Routes>
